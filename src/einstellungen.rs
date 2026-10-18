@@ -32,7 +32,7 @@ impl Default for Einstellungen {
     fn default() -> Self {
         Self {
             breite: 820,
-            hoehe: 580,
+            hoehe: 600,
             maximiert: false,
             intervall: 2,
             filter: FILTER_ALLE.to_string(),

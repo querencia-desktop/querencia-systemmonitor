@@ -210,7 +210,7 @@ impl Dateisystemliste {
         let spalten: [Spalte; 7] = [
             ("geraet", "Gerät", Some("geraet"), 0.0, 150, false),
             ("pfad", "Einhängepunkt", Some("pfad"), 0.0, -1, true),
-            ("typ", "Typ", Some("typ"), 0.0, 80, false),
+            ("typ", "Typ", Some("typ"), 0.0, 96, false),
             ("gesamt", "Gesamt", Some("gesamt-text"), 1.0, 90, false),
             ("frei", "Frei", Some("frei-text"), 1.0, 90, false),
             (

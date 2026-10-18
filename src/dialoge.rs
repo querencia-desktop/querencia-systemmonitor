@@ -256,9 +256,14 @@ fn zeile(grid: &gtk::Grid, zeile: i32, name: &str, wert: &str) {
     let v = gtk::Label::new(Some(wert));
     v.set_xalign(0.0);
     v.set_selectable(true);
+    // Nicht fokussierbar: sonst wählt GTK beim Öffnen den ersten Wert aus.
+    v.set_focusable(false);
     v.set_wrap(true);
     v.set_wrap_mode(gtk::pango::WrapMode::WordChar);
-    v.set_max_width_chars(70);
+    // Mindestbreite, damit lange Pfade nicht zeichenweise umbrechen (GTK
+    // misst das Fenster sonst mit absurder Mindesthöhe).
+    v.set_width_chars(48);
+    v.set_max_width_chars(72);
     grid.attach(&l, 0, zeile, 1, 1);
     grid.attach(&v, 1, zeile, 1, 1);
 }

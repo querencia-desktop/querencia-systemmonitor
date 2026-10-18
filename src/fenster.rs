@@ -257,6 +257,10 @@ impl Fenster {
         fenster.window.connect_close_request(move |_| {
             if let Some(f) = schwach.upgrade() {
                 f.einstellungen_speichern();
+                f.prozesse.aufraeumen();
+                if let Some(t) = f.timer.borrow_mut().take() {
+                    t.remove();
+                }
             }
             glib::Propagation::Proceed
         });

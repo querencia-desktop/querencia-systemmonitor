@@ -73,7 +73,7 @@ pub fn netz_skala(max_bytes: f64) -> f64 {
 
 fn graph_bereich(w: i32, h: i32) -> (f64, f64, f64, f64) {
     // (links, oben, breite, höhe) des Zeichenbereichs
-    let links = 58.0;
+    let links = 72.0;
     let oben = 8.0;
     let unten = 20.0;
     let rechts = 10.0;
@@ -232,7 +232,7 @@ impl Ressourcen {
 
         // CPU
         let cpu_area = gtk::DrawingArea::new();
-        cpu_area.set_content_height(120);
+        cpu_area.set_content_height(104);
         {
             let v = verlauf.clone();
             cpu_area.set_draw_func(move |_, cr, w, h| {
@@ -264,7 +264,7 @@ impl Ressourcen {
 
         // Speicher
         let speicher_area = gtk::DrawingArea::new();
-        speicher_area.set_content_height(100);
+        speicher_area.set_content_height(84);
         {
             let v = verlauf.clone();
             speicher_area.set_draw_func(move |_, cr, w, h| {
@@ -290,7 +290,7 @@ impl Ressourcen {
 
         // Netzwerk
         let netz_area = gtk::DrawingArea::new();
-        netz_area.set_content_height(100);
+        netz_area.set_content_height(84);
         {
             let v = verlauf.clone();
             netz_area.set_draw_func(move |_, cr, w, h| {

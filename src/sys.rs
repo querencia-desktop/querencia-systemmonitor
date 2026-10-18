@@ -135,8 +135,19 @@ mod tests {
 
     #[test]
     fn eigene_prioritaet() {
+        // Der Testlauf kann selbst unter `nice` stehen: gegen /proc prüfen.
         let pid = std::process::id() as i32;
-        assert_eq!(prioritaet(pid), Some(0));
+        let stat = std::fs::read_to_string("/proc/self/stat").unwrap();
+        let erwartet: i32 = stat
+            .rsplit(')')
+            .next()
+            .unwrap()
+            .split_whitespace()
+            .nth(16)
+            .unwrap()
+            .parse()
+            .unwrap();
+        assert_eq!(prioritaet(pid), Some(erwartet));
         assert_eq!(prioritaet(-5), None);
         assert_eq!(prioritaet(i32::MAX), None, "gibt es nicht");
     }

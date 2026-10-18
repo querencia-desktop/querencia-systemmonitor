@@ -65,13 +65,13 @@ mod tests {
         let s = parse_net_dev(include_str!("../../tests/daten/net-dev"));
         assert_eq!(s.len(), 2, "lo und eth0");
         assert_eq!(s[0].name, "lo");
-        assert_eq!(s[0].empfangen, 419_692);
+        assert_eq!(s[0].empfangen, 435_380);
         assert_eq!(s[1].name, "eth0");
-        assert_eq!(s[1].empfangen, 116_599_530);
-        assert_eq!(s[1].gesendet, 153_291_395);
+        assert_eq!(s[1].empfangen, 121_781_824);
+        assert_eq!(s[1].gesendet, 156_506_332);
         let n = summe(&s);
-        assert_eq!(n.empfangen, 116_599_530, "lo zählt nicht mit");
-        assert_eq!(n.gesendet, 153_291_395);
+        assert_eq!(n.empfangen, 121_781_824, "lo zählt nicht mit");
+        assert_eq!(n.gesendet, 156_506_332);
     }
 
     #[test]

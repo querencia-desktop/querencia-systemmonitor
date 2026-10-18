@@ -206,6 +206,7 @@ pub struct Prozessliste {
     seitengroesse: u64,
     takte_alt: Cell<Option<u64>>,
     kontextmenue: gtk::PopoverMenu,
+    scroll: gtk::ScrolledWindow,
 }
 
 impl Prozessliste {
@@ -292,6 +293,7 @@ impl Prozessliste {
         scroll.set_child(Some(&tabelle));
         scroll.set_vexpand(true);
         scroll.set_hexpand(true);
+        scroll.set_policy(gtk::PolicyType::Automatic, gtk::PolicyType::Always);
         scroll.set_has_frame(true);
         scroll.set_margin_top(6);
         scroll.set_margin_start(6);
@@ -334,6 +336,7 @@ impl Prozessliste {
             seitengroesse: sys::seitengroesse(),
             takte_alt: Cell::new(None),
             kontextmenue,
+            scroll,
         });
 
         // Sortierung aus den Einstellungen.
@@ -454,6 +457,14 @@ impl Prozessliste {
         if let Some(s) = self.tabelle.sorter() {
             s.changed(gtk::SorterChange::Different);
         }
+        // Die Scrollposition bleibt stehen: GtkListView verankert sich an
+        // einer Zeile und folgt ihr beim Umsortieren (die Liste würde bei
+        // CPU-Sortierung alle 2 s springen). Ein erneutes „value-changed“
+        // auf dem unveränderten Wert setzt den Anker auf die Zeile, die jetzt
+        // an dieser Position steht – set_value mit gleichem Wert täte nichts.
+        self.scroll
+            .vadjustment()
+            .emit_by_name::<()>("value-changed", &[]);
         anzahl
     }
 
@@ -509,5 +520,11 @@ impl Prozessliste {
 
     pub fn fokus_suche(&self) {
         self.suche.grab_focus();
+    }
+
+    /// Vor dem Abbau des Fensters: das Kontextmenü von der Tabelle lösen
+    /// (sonst meldet GTK beim Finalisieren verbliebene Kinder).
+    pub fn aufraeumen(&self) {
+        self.kontextmenue.unparent();
     }
 }
