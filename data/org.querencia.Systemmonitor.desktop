@@ -1,0 +1,20 @@
+[Desktop Entry]
+# Querencia Systemmonitor. Desktop-ID = GApplication-ID org.querencia.Systemmonitor,
+# damit labwc und die Fensterliste Titelleistensymbol und Namen finden.
+Type=Application
+Version=1.5
+Name=System Monitor
+Name[de]=Systemüberwachung
+GenericName=System Monitor
+GenericName[de]=Systemüberwachung
+Comment=View current processes and monitor system state
+Comment[de]=Laufende Prozesse anzeigen und den Systemzustand überwachen
+Exec=querencia-systemmonitor
+TryExec=querencia-systemmonitor
+Icon=org.querencia.Systemmonitor
+Terminal=false
+Categories=GTK;System;Monitor;
+Keywords=Monitor;System;Process;CPU;Memory;Network;
+Keywords[de]=Überwachung;System;Prozess;Prozessor;Speicher;Netzwerk;Task-Manager;
+StartupNotify=true
+StartupWMClass=org.querencia.Systemmonitor

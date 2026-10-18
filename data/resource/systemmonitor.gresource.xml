@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Eingebettete Ressourcen. Neu erzeugen: werkzeug/ressourcen.sh -->
+<gresources>
+  <gresource prefix="/org/querencia/Systemmonitor">
+    <file>icons/scalable/apps/org.querencia.Systemmonitor-fenster.svg</file>
+  </gresource>
+</gresources>
