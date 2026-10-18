@@ -1,7 +1,8 @@
 #!/bin/bash
 # Läuft IN der isolierten labwc-Sitzung (isoliert.py). Prüft den Systemmonitor
 # mit virtuellen Eingaben (qeingabe), Bildschirmfotos (grim) und /proc.
-# Fensterlage: 820×580 mittig auf dem 1280×720-Ausgang (labwc-Standard).
+# Fensterlage: 820 px breit, mittig auf dem 1280×720-Ausgang (labwc zentriert);
+# die Höhe hängt vom Inhalt ab, deshalb wird die Lage gemessen (lage.py).
 set -u
 . "$HMP04_PROFILE/env.sh"
 mkdir -p "$OUT"
@@ -12,6 +13,14 @@ blk() { echo "BLOCKED $*" | tee -a "$R"; }
 . "$(dirname "$0")/eingabe.sh"
 shot() { grim "$OUT/$1.png"; echo "--- $(date +%T.%N | cut -c1-12) Bild $1" >>"$LOG"; }
 running() { pgrep -f "^$SM_BIN" >/dev/null; }
+# Fensterlage messen: OBEN = Oberkante Titelleiste, UNTEN = Unterkante Fenster.
+lage() {
+    grim -t ppm -g "640,0 1x720" "$OUT/lage.ppm"
+    read -r OBEN UNTEN < <(python3 -I "$(dirname "$0")/lage.py" "$OUT/lage.ppm")
+    rm -f "$OUT/lage.ppm"
+    MENU=$((OBEN + 42)); TABS=$((OBEN + 75)); KOPF=$((OBEN + 154)); ZEILE1=$((OBEN + 178)); SCHALTER=$((UNTEN - 42))
+    echo "Fensterlage: oben $OBEN, unten $UNTEN (Menü y=$MENU, Reiter y=$TABS, Kopfzeile y=$KOPF, erste Zeile y=$ZEILE1)" | tee -a "$R"
+}
 INI=$XDG_CONFIG_HOME/querencia/systemmonitor.ini
 LOG=$OUT/systemmonitor.log
 
@@ -24,17 +33,19 @@ SLEEP2=$!
 # 1 Start
 "$SM_BIN" >"$LOG" 2>&1 &
 sleep 4
-running && ok "Start (Fenster 820×580, Reiter Prozesse)" || nok "Start"
+running && ok "Start (Fenster 820 px breit, Reiter Prozesse)" || nok "Start"
 q "move 1270 710" "wait 300"; shot 01-start
+lage
+[ "$OBEN" -gt 0 ] && [ "$UNTEN" -gt "$OBEN" ] && ok "Fensterlage gemessen" || nok "Fensterlage nicht messbar"
 
 # 2 Sortieren: Kopfzeile PID (aufsteigend), dann noch einmal (absteigend), dann Speicher
-q "move 660 184" "click" "wait 1500"; shot 02-sortiert-pid
+q "move 660 $KOPF" "click" "wait 1500"; shot 02-sortiert-pid
 q "click" "wait 1500"; shot 03-sortiert-pid-absteigend
-q "move 815 184" "click" "wait 1500"; shot 04-sortiert-speicher
+q "move 815 $KOPF" "click" "wait 1500"; shot 04-sortiert-speicher
 ok "Sortieren per Kopfzeile (Bilder 02–04; Sortierung wird in der INI geprüft)"
 
 # 3 Filter über Menü Ansicht: Eigene Prozesse (Tastaturnavigation im Menü)
-q "move 481 72" "click" "wait 1200"; shot 05-menue-ansicht
+q "move 481 $MENU" "click" "wait 1200"; shot 05-menue-ansicht
 # Nach dem Klick ist der erste Eintrag fokussiert: ein Down = „Eigene Prozesse“
 q "key Down" "wait 300"; shot 06-menue-ansicht-eigene
 q "key Return" "wait 1500"; shot 07-filter-eigene
@@ -47,7 +58,7 @@ q "wait 1500"; shot 08-suche-pid
 ok "Suche nach PID $SLEEP (Bild 08)"
 
 # 5 Testprozess beenden: Zeile anklicken, Entf -> Rückfrage; erst Abbrechen, dann Beenden
-q "move 400 208" "click" "wait 600" "key Delete" "wait 1200"; shot 09-rueckfrage-beenden
+q "move 400 $ZEILE1" "click" "wait 600" "key Delete" "wait 1200"; shot 09-rueckfrage-beenden
 q "key Escape" "wait 800"
 kill -0 "$SLEEP" 2>/dev/null && ok "Rückfrage abgebrochen: sleep $SLEEP lebt" || nok "Abbrechen hat den Prozess beendet"
 q "key Delete" "wait 1200" "key Return" "wait 1500"; shot 10-nach-beenden
@@ -58,7 +69,7 @@ running && ok "Programm läuft nach dem Beenden-Dialog weiter" || nok "Programm 
 # 6 Zweiter Testprozess: Eigenschaften (Alt+Return), Priorität (Strg+N) erhöhen -> Fehler, senken -> ok
 q "chord ctrl f" "chord ctrl a"
 for z in $(echo "$SLEEP2" | sed 's/./& /g'); do q "key $z"; done
-q "wait 1500" "move 400 208" "click" "wait 600" "chord alt Return" "wait 1500"; shot 11-eigenschaften
+q "wait 1500" "move 400 $ZEILE1" "click" "wait 600" "chord alt Return" "wait 1500"; shot 11-eigenschaften
 q "key Escape" "wait 800" "key Down" "wait 500"
 running && ok "Eigenschaften-Dialog geöffnet und mit Tastatur geschlossen (Bild 11)" || nok "Absturz nach Eigenschaften-Dialog"
 q "chord ctrl n" "wait 1200"; shot 12-prioritaet-dialog
@@ -68,48 +79,50 @@ NICE=$(cut -d' ' -f19 "/proc/$SLEEP2/stat" 2>/dev/null)
 [ "$NICE" = 5 ] && ok "Priorität gesenkt: Nice von sleep $SLEEP2 ist $NICE" || nok "Nice von sleep $SLEEP2 ist „$NICE“, erwartet 5"
 running && ok "Programm läuft nach den Prioritätsdialogen weiter" || nok "Absturz nach Prioritätsdialog"
 # Kontextmenü per Rechtsklick
-q "move 400 208" "rclick" "wait 1200"; shot 15-kontextmenue
+q "move 400 $ZEILE1" "rclick" "wait 1200"; shot 15-kontextmenue
 q "key Escape" "wait 500"
 # Suche leeren, Filter zurück auf Alle (Ansicht -> erster Eintrag)
 q "chord ctrl f" "chord ctrl a" "key BackSpace" "wait 500"
-q "move 481 72" "click" "wait 1000" "key Return" "wait 1200"
+q "move 481 $MENU" "click" "wait 1000" "key Return" "wait 1200"
 # Fremder Prozess (kthreadd, root): nur anzeigen, Knopf und Entf wirkungslos
-q "chord ctrl f" "key k" "key t" "key h" "key r" "key e" "key a" "key d" "key d" "wait 1200" "move 400 208" "click" "wait 500" "key Delete" "wait 1000"; shot 15b-fremder-prozess
+q "chord ctrl f" "key k" "key t" "key h" "key r" "key e" "key a" "key d" "key d" "wait 1200" "move 400 $ZEILE1" "click" "wait 500" "key Delete" "wait 1000"; shot 15b-fremder-prozess
 running && ok "Fremder Prozess ausgewählt: Entf ohne Wirkung, Programm läuft (Bild 15b)" || nok "Absturz bei fremdem Prozess"
 q "chord ctrl f" "chord ctrl a" "key BackSpace" "wait 500"
 # Scrollposition bleibt bei CPU-Sortierung stehen: 5 Raststufen nach unten, Griff zweimal messen
-q "move 730 184" "click" "wait 800" "click" "wait 800" "move 640 400" "scroll 5" "wait 2500"
-grim -t ppm -g "1035,200 8x415" "$OUT/griff-a.ppm"; shot 15c-scroll-a
+q "move 730 $KOPF" "click" "wait 800" "click" "wait 800" "move 640 400" "scroll 5" "wait 2500"
+GRIFF="1038,$((OBEN + 170)) 3x$((UNTEN - OBEN - 260))"
+grim -t ppm -g "$GRIFF" "$OUT/griff-a.ppm"; shot 15c-scroll-a
 sleep 4.5
-grim -t ppm -g "1035,200 8x415" "$OUT/griff-b.ppm"; shot 15d-scroll-b
+grim -t ppm -g "$GRIFF" "$OUT/griff-b.ppm"; shot 15d-scroll-b
 GA=$(python3 -I "$(dirname "$0")/balken.py" "$OUT/griff-a.ppm"); GB=$(python3 -I "$(dirname "$0")/balken.py" "$OUT/griff-b.ppm")
-if [ "$GA" -ge 0 ] && [ "$GB" -ge 0 ] && [ $((GA - GB)) -le 3 ] && [ $((GB - GA)) -le 3 ]; then ok "Scrollposition stabil bei CPU-Sortierung (Griff bei $GA/$GB px)"; else nok "Scrollposition driftet (Griff bei $GA/$GB px)"; fi
+# Toleranz 10 px: der Griff wandert minimal, wenn sich die Prozesszahl ändert.
+if [ "$GA" -ge 0 ] && [ "$GB" -ge 0 ] && [ $((GA - GB)) -le 10 ] && [ $((GB - GA)) -le 10 ]; then ok "Scrollposition stabil bei CPU-Sortierung (Griff bei $GA/$GB px)"; else nok "Scrollposition driftet (Griff bei $GA/$GB px)"; fi
 rm -f "$OUT/griff-a.ppm" "$OUT/griff-b.ppm"
-q "move 380 184" "click" "wait 800"
+q "move 380 $KOPF" "click" "wait 800"
 
 # 7 Reiter Ressourcen: zwei Bilder im Abstand, Graphen laufen
-q "move 390 105" "click" "wait 2500"; shot 16-ressourcen-a
+q "move 390 $TABS" "click" "wait 2500"; shot 16-ressourcen-a
 sleep 6; shot 17-ressourcen-b
 if cmp -s "$OUT/16-ressourcen-a.png" "$OUT/17-ressourcen-b.png"; then nok "Graphen unverändert nach 6 s"; else ok "Graphen laufen (Bilder 16/17 unterscheiden sich)"; fi
 
 # 8 Reiter Dateisysteme, Schalter „Alle Dateisysteme“
-q "move 515 105" "click" "wait 1500"; shot 18-dateisysteme
-q "move 420 646" "click" "wait 1500"; shot 19-dateisysteme-alle
+q "move 515 $TABS" "click" "wait 1500"; shot 18-dateisysteme
+q "move 420 $SCHALTER" "click" "wait 1500"; shot 19-dateisysteme-alle
 [ "$(grep -c . /proc/mounts)" -gt 3 ] && ok "Dateisysteme: Schalter „Alle“ (Bild 19 zeigt tmpfs/squashfs)" || true
 q "click" "wait 800"
 ok "Dateisysteme angezeigt (Bild 18: nur Geräte)"
 
 # 9 Info-Dialog über Menü Hilfe, mit Tastaturfokus schließen, danach Taste (Symbolabsturz-Muster)
-q "move 542 72" "click" "wait 1000" "key Return" "wait 1200"; shot 20-info
+q "move 542 $MENU" "click" "wait 1000" "key Return" "wait 1200"; shot 20-info
 q "key Escape" "wait 800" "key Down" "key Down" "wait 800"
 running && ok "Info-Dialog geöffnet und mit Escape geschlossen, Taste danach: kein Absturz (Bild 20)" || nok "Absturz nach Info-Dialog"
 # Info noch einmal per Maus schließen (Schließen-Knopf hat den Fokus: Return)
-q "move 542 72" "click" "wait 1000" "key Return" "wait 1200" "key Return" "wait 800" "key Down" "wait 500"
+q "move 542 $MENU" "click" "wait 1000" "key Return" "wait 1200" "key Return" "wait 800" "key Down" "wait 500"
 running && ok "Info-Dialog mit Return geschlossen: kein Absturz" || nok "Absturz nach Info-Dialog (Return)"
 
 # 10 Zurück auf Prozesse, Sortierung CPU (für die INI-Prüfung), dann Spalte Nice ausblenden (Ansicht -> Spalten -> Nice)
-q "move 282 105" "click" "wait 800" "move 730 184" "click" "wait 1200"; shot 21-sortiert-cpu
-q "move 481 72" "click" "wait 1000" "key Down" "key Down" "key Down" "key Down" "key Right" "wait 600"; shot 22-menue-spalten
+q "move 282 $TABS" "click" "wait 800" "move 730 $KOPF" "click" "wait 1200"; shot 21-sortiert-cpu
+q "move 481 $MENU" "click" "wait 1000" "key Down" "key Down" "key Down" "key Down" "key Right" "wait 600"; shot 22-menue-spalten
 q "key Down" "key Down" "key Down" "key Down" "key Return" "wait 1200"; shot 23-ohne-nice
 
 # 11 Beenden mit Strg+Q, INI prüfen
