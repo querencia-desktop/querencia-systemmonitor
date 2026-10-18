@@ -21,7 +21,8 @@ lauf 0 bash "$S" aktivieren
 [ -L "$P/opt/bin/querencia-systemmonitor" ] && [ -f "$P/apps/org.querencia.Systemmonitor.desktop" ] && [ -f "$P/icons/scalable/apps/org.querencia.Systemmonitor.svg" ] && [ ! -e "$P/icons/48x48" ] &&
     echo "PASS Link, Menüeintrag, Symbole ohne 48x48 angelegt" | tee -a "$L" || { echo "FAIL Dateien nach aktivieren" | tee -a "$L"; f=$((f + 1)); }
 n=$((n + 1))
-"$P/opt/bin/querencia-systemmonitor" --version >/dev/null 2>&1; echo "HINW Programm über Link aufrufbar (Exit $?)" | tee -a "$L"
+# Nie das GUI-Programm außerhalb der isolierten Umgebung starten: nur Linkziel prüfen.
+[ -x "$(readlink -f "$P/opt/bin/querencia-systemmonitor")" ] && echo "HINW Linkziel ausführbar: $(readlink "$P/opt/bin/querencia-systemmonitor")" | tee -a "$L"
 lauf 0 bash "$S" pruefen
 lauf 0 bash "$S" aktivieren
 lauf 0 bash "$S" zurueck
