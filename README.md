@@ -27,7 +27,7 @@ der Systemmonitor unter **Anwendungen → Systemwerkzeuge** (siehe Bericht).
 
 ## Bauen, testen
 
-[BUILDING.md](BUILDING.md), [TESTING.md](TESTING.md).
+[docs/BUILDING.md](docs/BUILDING.md), [docs/TESTING.md](docs/TESTING.md).
 
 ## Lizenz
 
