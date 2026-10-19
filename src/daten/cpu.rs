@@ -110,7 +110,7 @@ mod tests {
     #[test]
     fn stat_beispiel_gesamt_und_kerne() {
         let stat = parse_stat(BEISPIEL).expect("cpu-Zeile");
-        assert_eq!(stat.kerne.len(), 6, "sechs Kerne auf entwicklungs-vm");
+        assert_eq!(stat.kerne.len(), 6, "sechs Kerne in der Beispieldatei");
         assert!(stat.gesamt.user > 0 && stat.gesamt.idle > 0);
         assert!(stat.btime > 1_700_000_000, "btime {}", stat.btime);
         // Die Summe der Kerne ist die Gesamtzeile (bis auf Rundung je Feld).

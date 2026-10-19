@@ -13,9 +13,11 @@ for d in "$E"/data/icons/hicolor/*/; do
     g=$(basename "$d"); [ "$g" = 48x48 ] && continue
     mkdir -p "$V/icons/hicolor/$g/apps" && cp "$d"apps/org.querencia.Systemmonitor.* "$V/icons/hicolor/$g/apps/"
 done
-# Menüeintrag mit absolutem Programmpfad (Link in ~/opt/querencia/bin)
-sed -e 's#^Exec=querencia-systemmonitor#Exec=~/opt/querencia/bin/querencia-systemmonitor#' \
-    -e 's#^TryExec=querencia-systemmonitor#TryExec=~/opt/querencia/bin/querencia-systemmonitor#' \
+# Menüeintrag mit absolutem Programmpfad (Link in ~/opt/querencia/bin,
+# anderswo über QUERENCIA_BIN)
+ZIELBIN=${QUERENCIA_BIN:-$HOME/opt/querencia/bin}
+sed -e "s#^Exec=querencia-systemmonitor#Exec=$ZIELBIN/querencia-systemmonitor#" \
+    -e "s#^TryExec=querencia-systemmonitor#TryExec=$ZIELBIN/querencia-systemmonitor#" \
     -e '2i # Live-Vorschlag G2-S (Querencia-Werkstatt, 2026-10-18); Rückfall: bash ~/projects/querencia-systemmonitor/integration/systemmonitor-integrieren.sh zurueck' \
     "$E/data/org.querencia.Systemmonitor.desktop" >"$V/org.querencia.Systemmonitor.desktop"
 desktop-file-validate "$V/org.querencia.Systemmonitor.desktop"

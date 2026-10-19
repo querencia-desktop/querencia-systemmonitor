@@ -315,10 +315,10 @@ mod tests {
     #[test]
     fn benutzer_aus_passwd() {
         let b = Benutzer::aus_passwd(
-            "root:x:0:0:root:/root:/bin/bash\nuser:x:1001:1001::~:/bin/bash\nkaputt\n",
+            "root:x:0:0:root:/root:/bin/bash\nuser:x:1000:1000::/home/user:/bin/bash\nkaputt\n",
         );
         assert_eq!(b.name(0), "root");
-        assert_eq!(b.name(1001), "user");
+        assert_eq!(b.name(1000), "user");
         assert_eq!(b.name(4711), "4711");
     }
 
