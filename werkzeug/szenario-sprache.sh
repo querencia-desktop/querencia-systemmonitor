@@ -38,7 +38,7 @@ case $SPRACHE in
 de) [ -n "$KAT" ] && ok "de: Katalog eingeblendet" || nok "de: kein Katalog eingeblendet" ;;
 *) [ -z "$KAT" ] && ok "$SPRACHE: kein Katalog eingeblendet" || nok "$SPRACHE: Katalog eingeblendet" ;;
 esac
-q "move $((B - 10)) $((H - 10))" "wait 400"; shot s1-start
+q "move 1270 710" "wait 400"; shot s1-start
 
 # Menüs der Reihe nach
 q "key F10" "wait 900"; shot s2-menue-1
@@ -51,7 +51,14 @@ running && ok "Menüs geöffnet (Bilder s2–s5)" || nok "Absturz bei den Menüs
 # Eigener Testprozess: suchen, Eigenschaften, Priorität, Beenden mit Rückfrage
 q "chord ctrl f" "wait 400"
 for z in $(echo "$TEST" | sed 's/./& /g'); do q "key $z"; done
-q "wait 1500" "key Down" "wait 300" "key Down" "wait 600"
+# Erste Zeile anklicken: Lage wie in szenario.sh (Oberkante Titelleiste
+# gemessen, erste Zeile 178 px darunter), Spalte in der Bildschirmmitte.
+grim -t ppm -g "$((B / 2)),0 1x$H" "$OUT/lage.ppm"
+read -r OBEN _ < <(python3 -I "$(dirname "$0")/lage.py" "$OUT/lage.ppm"); rm -f "$OUT/lage.ppm"
+echo "INFO Fenster oben bei $OBEN" >>"$R"
+# qeingabe rechnet Zeigerkoordinaten in 1280x720 (auf den Ausgang skaliert).
+ZX=$(((B / 2) * 1280 / B)); ZY=$(((OBEN + 178) * 720 / H))
+q "wait 1500" "move $ZX $ZY" "click" "wait 800"
 q "chord alt Return" "wait 1500"; shot s6-eigenschaften
 q "key Escape" "wait 800"
 q "chord ctrl n" "wait 1200"; shot s7-prioritaet
