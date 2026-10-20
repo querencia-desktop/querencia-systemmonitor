@@ -16,7 +16,7 @@ window.qsm-window menubar > item {
 window.qsm-window menubar > item:hover,
 window.qsm-window menubar > item:selected {
   background-image: linear-gradient(to bottom, #f6a179, #f07746);
-  color: #ffffff;
+  color: #1a1a1a;
 }
 
 window.qsm-window popover.menu contents {
@@ -34,7 +34,7 @@ window.qsm-window popover.menu modelbutton {
 window.qsm-window popover.menu modelbutton:hover,
 window.qsm-window popover.menu modelbutton:selected {
   background-image: linear-gradient(to bottom, #f6a179, #f07746);
-  color: #ffffff;
+  color: #1a1a1a;
 }
 
 window.qsm-window notebook > header {
@@ -62,7 +62,7 @@ window.qsm-window columnview > header button {
 window.qsm-window columnview listview row:selected,
 window.qsm-window columnview listview row:selected label {
   background-image: linear-gradient(to bottom, #f6a179, #f07746);
-  color: #ffffff;
+  color: #1a1a1a;
 }
 
 window.qsm-window columnview listview row {
