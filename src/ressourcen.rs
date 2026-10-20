@@ -15,6 +15,7 @@ use crate::daten::cpu::{self, Stat};
 use crate::daten::einheiten;
 use crate::daten::netz::{self, Netz};
 use crate::daten::speicher::{self, Speicher};
+use crate::i18n::{gettext, gettext_f};
 
 /// Sekunden im Fenster (ein Messpunkt je Sekunde).
 pub const PUNKTE: usize = 60;
@@ -179,6 +180,19 @@ fn farbfeld(index: usize) -> gtk::DrawingArea {
     a
 }
 
+/// „CPU total: 12 %“
+fn cpu_gesamt_text(wert: &str) -> String {
+    gettext_f("CPU total: {value}", &[("value", wert)])
+}
+
+/// „CPU3: 12 %“ (Kerne ab 1 gezählt)
+fn cpu_kern_text(nummer: usize, wert: &str) -> String {
+    gettext_f(
+        "CPU{number}: {value}",
+        &[("number", &nummer.to_string()), ("value", wert)],
+    )
+}
+
 fn legende(index: usize, text: &str) -> (gtk::Box, gtk::Label) {
     let b = gtk::Box::new(gtk::Orientation::Horizontal, 6);
     b.set_margin_end(12);
@@ -253,11 +267,12 @@ impl Ressourcen {
         cpu_legenden.set_column_spacing(6);
         cpu_legenden.set_row_spacing(2);
         let mut cpu_labels = Vec::new();
-        let (b, l) = legende(0, "CPU gesamt: 0 %");
+        // TRANSLATORS: Legenden im Reiter „Resources“; {value} ist z. B. „12 %“.
+        let (b, l) = legende(0, &cpu_gesamt_text(&einheiten::prozent(0.0)));
         cpu_legenden.insert(&b, -1);
         cpu_labels.push(l);
         for i in 0..kerne {
-            let (b, l) = legende(i + 1, &format!("CPU{}: 0 %", i + 1));
+            let (b, l) = legende(i + 1, &cpu_kern_text(i + 1, &einheiten::prozent(0.0)));
             cpu_legenden.insert(&b, -1);
             cpu_labels.push(l);
         }
@@ -283,9 +298,9 @@ impl Ressourcen {
         let speicher_legenden = gtk::FlowBox::new();
         speicher_legenden.set_selection_mode(gtk::SelectionMode::None);
         speicher_legenden.set_max_children_per_line(2);
-        let (b, speicher_label) = legende(0, "Speicher: –");
+        let (b, speicher_label) = legende(0, &gettext_f("Memory: {value}", &[("value", "–")]));
         speicher_legenden.insert(&b, -1);
-        let (b, auslagerung_label) = legende(1, "Auslagerung: –");
+        let (b, auslagerung_label) = legende(1, &gettext_f("Swap: {value}", &[("value", "–")]));
         speicher_legenden.insert(&b, -1);
 
         // Netzwerk
@@ -312,9 +327,9 @@ impl Ressourcen {
         let netz_legenden = gtk::FlowBox::new();
         netz_legenden.set_selection_mode(gtk::SelectionMode::None);
         netz_legenden.set_max_children_per_line(2);
-        let (b, empfangen_label) = legende(0, "Empfangen: –");
+        let (b, empfangen_label) = legende(0, &gettext_f("Received: {value}", &[("value", "–")]));
         netz_legenden.insert(&b, -1);
-        let (b, gesendet_label) = legende(1, "Gesendet: –");
+        let (b, gesendet_label) = legende(1, &gettext_f("Sent: {value}", &[("value", "–")]));
         netz_legenden.insert(&b, -1);
 
         let widget = gtk::Box::new(gtk::Orientation::Vertical, 12);
@@ -322,13 +337,22 @@ impl Ressourcen {
         widget.set_margin_bottom(8);
         widget.set_margin_start(8);
         widget.set_margin_end(8);
-        widget.append(&abschnitt("CPU-Verlauf", &cpu_area, &cpu_legenden));
+        // TRANSLATORS: Abschnitte im Reiter „Resources“ (gnome-system-monitor 2.x).
         widget.append(&abschnitt(
-            "Speicher- und Auslagerungsverlauf",
+            &gettext("CPU History"),
+            &cpu_area,
+            &cpu_legenden,
+        ));
+        widget.append(&abschnitt(
+            &gettext("Memory and Swap History"),
             &speicher_area,
             &speicher_legenden,
         ));
-        widget.append(&abschnitt("Netzwerkverlauf", &netz_area, &netz_legenden));
+        widget.append(&abschnitt(
+            &gettext("Network History"),
+            &netz_area,
+            &netz_legenden,
+        ));
 
         let r = Rc::new(Self {
             widget,
@@ -366,14 +390,14 @@ impl Ressourcen {
                 let mut v = self.verlauf.borrow_mut();
                 let gesamt = cpu::auslastung(&alt.gesamt, &stat.gesamt);
                 v.cpu_gesamt.push(gesamt);
-                self.cpu_labels[0].set_text(&format!("CPU gesamt: {}", einheiten::prozent(gesamt)));
+                self.cpu_labels[0].set_text(&cpu_gesamt_text(&einheiten::prozent(gesamt)));
                 for (i, kern) in stat.kerne.iter().enumerate() {
                     let wert = alt.kerne.get(i).map_or(0.0, |a| cpu::auslastung(a, kern));
                     if let Some(reihe) = v.kerne.get_mut(i) {
                         reihe.push(wert);
                     }
                     if let Some(l) = self.cpu_labels.get(i + 1) {
-                        l.set_text(&format!("CPU{}: {}", i + 1, einheiten::prozent(wert)));
+                        l.set_text(&cpu_kern_text(i + 1, &einheiten::prozent(wert)));
                     }
                 }
             }
@@ -385,17 +409,21 @@ impl Ressourcen {
             let au = Speicher::anteil(s.auslagerung_belegt(), s.auslagerung_gesamt);
             v.speicher.push(sp * 100.0);
             v.auslagerung.push(au * 100.0);
-            self.speicher_label.set_text(&format!(
-                "Speicher: {} ({}) von {}",
-                einheiten::bytes(s.belegt()),
-                einheiten::prozent(sp * 100.0),
-                einheiten::bytes(s.gesamt)
+            self.speicher_label.set_text(&gettext_f(
+                "Memory: {used} ({percent}) of {total}",
+                &[
+                    ("used", &einheiten::bytes(s.belegt())),
+                    ("percent", &einheiten::prozent(sp * 100.0)),
+                    ("total", &einheiten::bytes(s.gesamt)),
+                ],
             ));
-            self.auslagerung_label.set_text(&format!(
-                "Auslagerung: {} ({}) von {}",
-                einheiten::bytes(s.auslagerung_belegt()),
-                einheiten::prozent(au * 100.0),
-                einheiten::bytes(s.auslagerung_gesamt)
+            self.auslagerung_label.set_text(&gettext_f(
+                "Swap: {used} ({percent}) of {total}",
+                &[
+                    ("used", &einheiten::bytes(s.auslagerung_belegt())),
+                    ("percent", &einheiten::prozent(au * 100.0)),
+                    ("total", &einheiten::bytes(s.auslagerung_gesamt)),
+                ],
             ));
         }
         if let Some(n) = netz::lese_netz() {
@@ -408,15 +436,19 @@ impl Ressourcen {
                 v.empfangen.push(rx);
                 v.gesendet.push(tx);
                 v.netz_summe = n;
-                self.empfangen_label.set_text(&format!(
-                    "Empfangen: {} (gesamt {})",
-                    einheiten::rate(rx),
-                    einheiten::bytes(n.empfangen)
+                self.empfangen_label.set_text(&gettext_f(
+                    "Received: {rate} (total {sum})",
+                    &[
+                        ("rate", &einheiten::rate(rx)),
+                        ("sum", &einheiten::bytes(n.empfangen)),
+                    ],
                 ));
-                self.gesendet_label.set_text(&format!(
-                    "Gesendet: {} (gesamt {})",
-                    einheiten::rate(tx),
-                    einheiten::bytes(n.gesendet)
+                self.gesendet_label.set_text(&gettext_f(
+                    "Sent: {rate} (total {sum})",
+                    &[
+                        ("rate", &einheiten::rate(tx)),
+                        ("sum", &einheiten::bytes(n.gesendet)),
+                    ],
                 ));
             }
             *alt = Some((n, jetzt));

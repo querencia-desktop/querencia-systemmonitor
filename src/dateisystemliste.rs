@@ -11,6 +11,7 @@ use gtk::{gio, glib};
 
 use crate::daten::dateisysteme::{self, Dateisystem};
 use crate::daten::einheiten;
+use crate::i18n::gettext;
 
 mod imp {
     use super::*;
@@ -199,29 +200,30 @@ impl Dateisystemliste {
         auswahl.set_autoselect(false);
         auswahl.set_can_unselect(true);
         tabelle.set_model(Some(&auswahl));
-        type Spalte = (
-            &'static str,
-            &'static str,
-            Option<&'static str>,
-            f32,
-            i32,
-            bool,
-        );
+        type Spalte = (&'static str, String, Option<&'static str>, f32, i32, bool);
+        // TRANSLATORS: Spaltenköpfe der Dateisysteme (gnome-system-monitor 2.x).
         let spalten: [Spalte; 7] = [
-            ("geraet", "Gerät", Some("geraet"), 0.0, 140, false),
-            ("pfad", "Einhängepunkt", Some("pfad"), 0.0, -1, true),
-            ("typ", "Typ", Some("typ"), 0.0, 96, false),
-            ("gesamt", "Gesamt", Some("gesamt-text"), 1.0, 86, false),
-            ("frei", "Frei", Some("frei-text"), 1.0, 86, false),
+            ("geraet", gettext("Device"), Some("geraet"), 0.0, 140, false),
+            ("pfad", gettext("Directory"), Some("pfad"), 0.0, -1, true),
+            ("typ", gettext("Type"), Some("typ"), 0.0, 96, false),
+            (
+                "gesamt",
+                gettext("Total"),
+                Some("gesamt-text"),
+                1.0,
+                86,
+                false,
+            ),
+            ("frei", gettext("Free"), Some("frei-text"), 1.0, 86, false),
             (
                 "verfuegbar",
-                "Verfügbar",
+                gettext("Available"),
                 Some("verfuegbar-text"),
                 1.0,
                 90,
                 false,
             ),
-            ("belegt", "Belegt", None, 0.0, 150, false),
+            ("belegt", gettext("Used"), None, 0.0, 150, false),
         ];
         let mut erste = None;
         for (kennung, titel, prop, xalign, breite, expand) in spalten {
@@ -230,7 +232,7 @@ impl Dateisystemliste {
                 None => balkenfabrik(),
             };
             let spalte = gtk::ColumnViewColumn::builder()
-                .title(titel)
+                .title(titel.as_str())
                 .factory(&fabrik)
                 .sorter(&sortierer(kennung))
                 .resizable(true)
@@ -254,9 +256,9 @@ impl Dateisystemliste {
         scroll.set_margin_top(6);
         scroll.set_margin_start(6);
         scroll.set_margin_end(6);
-        let schalter = gtk::CheckButton::with_mnemonic(
-            "_Alle Dateisysteme anzeigen (auch tmpfs, overlay, squashfs)",
-        );
+        let schalter = gtk::CheckButton::with_mnemonic(&gettext(
+            "Show _all file systems (also tmpfs, overlay, squashfs)",
+        ));
         schalter.set_action_name(Some("win.alle-dateisysteme"));
         schalter.set_margin_start(6);
         schalter.set_margin_top(6);

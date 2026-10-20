@@ -3,7 +3,8 @@
 //! Vorbild ist die GNOME-2-Systemüberwachung: Reiter Prozesse, Ressourcen,
 //! Dateisysteme; Menüleiste, Statuszeile. GTK 4 ohne libadwaita und ohne
 //! eigene Titelleiste, damit labwc die klassische Server-Titelleiste
-//! zeichnet. Daten kommen direkt aus `/proc`.
+//! zeichnet. Daten kommen direkt aus `/proc`. Texte über GNU gettext
+//! (`i18n`): msgid englisch, Deutsch aus `po/de.po`.
 //!
 //! Eine Instanz je Sitzung (GApplication `org.querencia.Systemmonitor`):
 //! ein zweiter Aufruf holt das Fenster nach vorn.
@@ -13,6 +14,7 @@ mod daten;
 mod dialoge;
 mod einstellungen;
 mod fenster;
+mod i18n;
 mod prozessliste;
 mod ressourcen;
 mod sys;
@@ -22,9 +24,15 @@ use gtk::{gio, glib};
 
 pub const APP_ID: &str = "org.querencia.Systemmonitor";
 pub const APP_NAME: &str = "Querencia Systemmonitor";
-pub const FENSTER_TITEL: &str = "Systemüberwachung";
+
+/// Fenstertitel wie die GNOME-2-Systemüberwachung (übersetzt).
+pub fn fenster_titel() -> String {
+    // TRANSLATORS: Fenstertitel und Titel der Rückfragen.
+    i18n::gettext("System Monitor")
+}
 
 fn main() -> glib::ExitCode {
+    i18n::init();
     let app = gtk::Application::builder()
         .application_id(APP_ID)
         .flags(gio::ApplicationFlags::default())

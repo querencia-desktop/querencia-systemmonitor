@@ -8,6 +8,8 @@ use std::ffi::CString;
 use std::io;
 use std::mem::MaybeUninit;
 
+use crate::i18n::gettext;
+
 /// Seitengröße in Bytes (`_SC_PAGESIZE`), 4096 als Rückfall.
 pub fn seitengroesse() -> u64 {
     // SAFETY: sysconf liest nur eine Konstante.
@@ -39,12 +41,12 @@ impl Signal {
     }
 }
 
-/// Deutscher Fehlertext zu einem Systemfehler.
+/// Fehlertext (übersetzt) zu einem Systemfehler.
 pub fn fehlertext(err: &io::Error) -> String {
     match err.raw_os_error() {
-        Some(libc::EPERM) => "Keine Berechtigung für diesen Prozess.".to_string(),
-        Some(libc::EACCES) => "Zugriff verweigert.".to_string(),
-        Some(libc::ESRCH) => "Der Prozess existiert nicht mehr.".to_string(),
+        Some(libc::EPERM) => gettext("No permission for this process."),
+        Some(libc::EACCES) => gettext("Access denied."),
+        Some(libc::ESRCH) => gettext("The process no longer exists."),
         _ => err.to_string(),
     }
 }
@@ -53,7 +55,7 @@ pub fn fehlertext(err: &io::Error) -> String {
 /// „alle“, wie `kill(0)`/`kill(-1)` es täten).
 pub fn signal(pid: i32, signal: Signal) -> Result<(), String> {
     if pid <= 1 {
-        return Err("Dieser Prozess darf nicht beendet werden.".to_string());
+        return Err(gettext("This process must not be ended."));
     }
     // SAFETY: kill hat keine Speicherargumente; pid ist geprüft positiv.
     let r = unsafe { libc::kill(pid, signal.nummer()) };
@@ -83,10 +85,10 @@ pub fn prioritaet(pid: i32) -> Option<i32> {
 }
 
 /// Setzt den Nice-Wert. Ohne Root lässt der Kernel nur Erhöhungen zu
-/// (niedrigere Priorität); der Fehler wird deutsch erklärt.
+/// (niedrigere Priorität); der Fehler wird in der Oberflächensprache erklärt.
 pub fn prioritaet_setzen(pid: i32, nice: i32) -> Result<(), String> {
     if pid <= 0 {
-        return Err("Ungültige Prozessnummer.".to_string());
+        return Err(gettext("Invalid process ID."));
     }
     let nice = nice.clamp(-20, 19);
     // SAFETY: setpriority hat keine Speicherargumente; Werte sind geprüft.
@@ -97,7 +99,7 @@ pub fn prioritaet_setzen(pid: i32, nice: i32) -> Result<(), String> {
     let err = io::Error::last_os_error();
     Err(match err.raw_os_error() {
         Some(libc::EACCES) => {
-            "Ohne Root-Rechte lässt sich die Priorität nur senken (höherer Nice-Wert).".to_string()
+            gettext("Without root privileges the priority can only be lowered (higher nice value).")
         }
         _ => fehlertext(&err),
     })
@@ -156,7 +158,7 @@ mod tests {
     fn prioritaet_erhoehen_verweigert() {
         // Prozess 1 gehört root: EPERM (oder EACCES), niemals Erfolg.
         let e = prioritaet_setzen(1, -5).unwrap_err();
-        assert!(e.contains("Berechtigung") || e.contains("Root"), "{e}");
+        assert!(e.contains("permission") || e.contains("root"), "{e}");
         assert!(prioritaet_setzen(0, 0).is_err());
     }
 
@@ -174,7 +176,7 @@ mod tests {
         let status = kind.wait().unwrap();
         assert!(!status.success());
         let e = signal(i32::MAX, Signal::Beenden).unwrap_err();
-        assert!(e.contains("existiert nicht"), "{e}");
+        assert!(e.contains("no longer exists"), "{e}");
     }
 
     #[test]

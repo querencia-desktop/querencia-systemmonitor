@@ -12,7 +12,8 @@ use gtk::{gdk, gio, glib};
 
 use crate::daten::einheiten;
 use crate::daten::prozesse::Eigenschaften;
-use crate::{APP_NAME, FENSTER_TITEL};
+use crate::i18n::{gettext, gettext_f};
+use crate::{APP_NAME, fenster_titel};
 
 /// Noch nicht ausgeführte Antwort (wird genau einmal genommen).
 type Antwort = Rc<RefCell<Option<Box<dyn FnOnce()>>>>;
@@ -153,8 +154,8 @@ pub fn frage(
     gefaehrlich: bool,
     ja: impl FnOnce() + 'static,
 ) {
-    let window = modales_fenster(parent, FENSTER_TITEL);
-    let cancel = gtk::Button::with_mnemonic("_Abbrechen");
+    let window = modales_fenster(parent, &fenster_titel());
+    let cancel = gtk::Button::with_mnemonic(&gettext("_Cancel"));
     let ok = gtk::Button::with_mnemonic(bestaetigung);
     ok.add_css_class(if gefaehrlich {
         "destructive-action"
@@ -183,8 +184,8 @@ pub fn frage(
 
 /// Fehlermeldung mit einem Knopf „Schließen“.
 pub fn fehler(parent: &impl IsA<gtk::Window>, primary: &str, secondary: &str) {
-    let window = modales_fenster(parent, FENSTER_TITEL);
-    let close = gtk::Button::with_mnemonic("_Schließen");
+    let window = modales_fenster(parent, &fenster_titel());
+    let close = gtk::Button::with_mnemonic(&gettext("_Close"));
     let body = meldung("dialog-error", primary, secondary);
     window.set_child(Some(&inhalt(&body, &knopfzeile(&[&close]))));
     window.set_default_widget(Some(&close));
@@ -203,12 +204,18 @@ pub fn prioritaet(
     aktuell: i32,
     setzen: impl Fn(i32) -> Result<(), String> + 'static,
 ) {
-    let window = modales_fenster(parent, "Priorität ändern");
+    let window = modales_fenster(parent, &gettext("Change Priority"));
     let body = gtk::Box::new(gtk::Orientation::Vertical, 8);
     let titel = gtk::Label::new(None);
     titel.set_markup(&format!(
-        "<b>Priorität des Prozesses „{}“ (PID {pid}) ändern</b>",
-        glib::markup_escape_text(name)
+        "<b>{}</b>",
+        gettext_f(
+            "Change the priority of process “{name}” (PID {pid})",
+            &[
+                ("name", glib::markup_escape_text(name).as_str()),
+                ("pid", &pid.to_string()),
+            ],
+        )
     ));
     titel.set_xalign(0.0);
     let scale = gtk::Scale::with_range(gtk::Orientation::Horizontal, -20.0, 19.0, 1.0);
@@ -216,20 +223,26 @@ pub fn prioritaet(
     scale.set_draw_value(true);
     scale.set_digits(0);
     scale.set_size_request(360, -1);
-    scale.add_mark(-20.0, gtk::PositionType::Bottom, Some("Sehr hoch"));
-    scale.add_mark(0.0, gtk::PositionType::Bottom, Some("Normal"));
-    scale.add_mark(19.0, gtk::PositionType::Bottom, Some("Sehr niedrig"));
-    let hinweis = gtk::Label::new(Some(
-        "Nice-Wert: niedrigere Werte bedeuten höhere Priorität.\n\
-         Ohne Root-Rechte lässt sich die Priorität nur senken.",
-    ));
+    // TRANSLATORS: Marken des Reglers im Dialog „Change Priority“.
+    scale.add_mark(
+        -20.0,
+        gtk::PositionType::Bottom,
+        Some(&gettext("Very High")),
+    );
+    scale.add_mark(0.0, gtk::PositionType::Bottom, Some(&gettext("Normal")));
+    scale.add_mark(19.0, gtk::PositionType::Bottom, Some(&gettext("Very Low")));
+    let hinweis = gtk::Label::new(Some(&gettext(
+        "Nice value: lower values mean higher priority.\n\
+         Without root privileges the priority can only be lowered.",
+    )));
     hinweis.add_css_class("dim-label");
     hinweis.set_xalign(0.0);
     body.append(&titel);
     body.append(&scale);
     body.append(&hinweis);
-    let cancel = gtk::Button::with_mnemonic("_Abbrechen");
-    let ok = gtk::Button::with_mnemonic("Priorität ä_ndern");
+    let cancel = gtk::Button::with_mnemonic(&gettext("_Cancel"));
+    // TRANSLATORS: Knopf; Zugriffstaste verschieden von „_Cancel“.
+    let ok = gtk::Button::with_mnemonic(&gettext("Change _Priority"));
     ok.add_css_class("suggested-action");
     window.set_child(Some(&inhalt(&body, &knopfzeile(&[&cancel, &ok]))));
     window.set_default_widget(Some(&ok));
@@ -241,7 +254,7 @@ pub fn prioritaet(
         let Some(w) = w.upgrade() else { return };
         match setzen(s.value().round() as i32) {
             Ok(()) => spaeter_schliessen(&w),
-            Err(text) => fehler(&w, "Die Priorität konnte nicht geändert werden.", &text),
+            Err(text) => fehler(&w, &gettext("The priority could not be changed."), &text),
         }
     });
     window.present();
@@ -290,7 +303,10 @@ pub fn eigenschaften(parent: &impl IsA<gtk::Window>, kopf: &Kopf<'_>, e: &Eigens
     } = *kopf;
     let window = gtk::Window::builder()
         .transient_for(parent)
-        .title(format!("Eigenschaften von „{name}“ (PID {pid})"))
+        .title(gettext_f(
+            "Properties of “{name}” (PID {pid})",
+            &[("name", name), ("pid", &pid.to_string())],
+        ))
         .default_width(640)
         .default_height(480)
         .destroy_with_parent(true)
@@ -303,30 +319,41 @@ pub fn eigenschaften(parent: &impl IsA<gtk::Window>, kopf: &Kopf<'_>, e: &Eigens
     let start = e
         .start
         .and_then(|s| glib::DateTime::from_unix_local(s as i64).ok())
-        .and_then(|d| d.format("%d.%m.%Y %H:%M:%S").ok())
+        // TRANSLATORS: Datumsformat für „Started:“ (strftime wie GLib).
+        .and_then(|d| d.format(&gettext("%Y-%m-%d %H:%M:%S")).ok())
         .map(|g| g.to_string())
-        .unwrap_or_else(|| "unbekannt".to_string());
+        .unwrap_or_else(|| gettext("unknown"));
     let befehl = if e.befehlszeile.is_empty() {
-        "(Kernel-Thread, keine Befehlszeile)".to_string()
+        gettext("(kernel thread, no command line)")
     } else {
         e.befehlszeile.clone()
     };
-    zeile(&grid, 0, "Prozessname:", name);
-    zeile(&grid, 1, "Benutzer:", benutzer);
-    zeile(&grid, 2, "PID:", &pid.to_string());
-    zeile(&grid, 3, "Zustand:", zustand);
-    zeile(&grid, 4, "Speicher (RSS):", &einheiten::bytes(speicher));
-    zeile(&grid, 5, "Priorität (Nice):", &nice.to_string());
-    zeile(&grid, 6, "Gestartet:", &start);
-    zeile(&grid, 7, "Befehlszeile:", &befehl);
+    // TRANSLATORS: Zeilen im Dialog „Properties“.
+    zeile(&grid, 0, &gettext("Process name:"), name);
+    zeile(&grid, 1, &gettext("User:"), benutzer);
+    zeile(&grid, 2, &gettext("PID:"), &pid.to_string());
+    zeile(&grid, 3, &gettext("Status:"), zustand);
+    zeile(
+        &grid,
+        4,
+        &gettext("Memory (RSS):"),
+        &einheiten::bytes(speicher),
+    );
+    zeile(&grid, 5, &gettext("Priority (Nice):"), &nice.to_string());
+    zeile(&grid, 6, &gettext("Started:"), &start);
+    zeile(&grid, 7, &gettext("Command line:"), &befehl);
+    let nicht_lesbar = gettext("not readable");
     zeile(
         &grid,
         8,
-        "Arbeitsverzeichnis:",
-        e.arbeitsverzeichnis.as_deref().unwrap_or("nicht lesbar"),
+        &gettext("Working directory:"),
+        e.arbeitsverzeichnis.as_deref().unwrap_or(&nicht_lesbar),
     );
     let ueberschrift = gtk::Label::new(None);
-    ueberschrift.set_markup("<b>Geöffnete Dateien</b>");
+    ueberschrift.set_markup(&format!(
+        "<b>{}</b>",
+        glib::markup_escape_text(&gettext("Open Files"))
+    ));
     ueberschrift.set_xalign(0.0);
     ueberschrift.set_margin_top(12);
     let liste = gtk::TextView::new();
@@ -336,9 +363,9 @@ pub fn eigenschaften(parent: &impl IsA<gtk::Window>, kopf: &Kopf<'_>, e: &Eigens
     liste.set_left_margin(6);
     liste.set_top_margin(4);
     let text = match &e.dateien {
-        Ok(d) if d.is_empty() => "(keine)".to_string(),
+        Ok(d) if d.is_empty() => gettext("(none)"),
         Ok(d) => d.join("\n"),
-        Err(grund) => format!("Nicht lesbar: {grund}"),
+        Err(grund) => gettext_f("Not readable: {reason}", &[("reason", grund)]),
     };
     liste.buffer().set_text(&text);
     let scroll = gtk::ScrolledWindow::new();
@@ -349,7 +376,7 @@ pub fn eigenschaften(parent: &impl IsA<gtk::Window>, kopf: &Kopf<'_>, e: &Eigens
     body.append(&grid);
     body.append(&ueberschrift);
     body.append(&scroll);
-    let close = gtk::Button::with_mnemonic("_Schließen");
+    let close = gtk::Button::with_mnemonic(&gettext("_Close"));
     window.set_child(Some(&inhalt(&body, &knopfzeile(&[&close]))));
     window.set_default_widget(Some(&close));
     escape_schliesst(&window);
@@ -362,7 +389,8 @@ const LOGO_64: &[u8] = include_bytes!("../data/logo/querencia-logo-64.png");
 
 /// „Info“: offizielles Querencia-Logo C2, Name, Version, Lizenz.
 pub fn info(parent: &impl IsA<gtk::Window>) {
-    let window = modales_fenster(parent, &format!("Info zu {APP_NAME}"));
+    // TRANSLATORS: Fenstertitel des Info-Dialogs; {name} ist der Programmname.
+    let window = modales_fenster(parent, &gettext_f("About {name}", &[("name", APP_NAME)]));
     let body = gtk::Box::new(gtk::Orientation::Vertical, 8);
     body.set_halign(gtk::Align::Center);
     if let Ok(texture) = gdk::Texture::from_bytes(&glib::Bytes::from_static(LOGO_64)) {
@@ -375,26 +403,32 @@ pub fn info(parent: &impl IsA<gtk::Window>) {
         "<b><big>{APP_NAME} {}</big></b>",
         env!("CARGO_PKG_VERSION")
     ));
-    let text = gtk::Label::new(Some(
-        "Systemüberwachung für Querencia Desktop\n\
-         nach dem Vorbild der GNOME-2-Systemüberwachung:\n\
-         Prozesse, Ressourcen, Dateisysteme.",
-    ));
+    let text = gtk::Label::new(Some(&gettext(
+        "System monitor for Querencia Desktop\n\
+         modelled on the GNOME 2 System Monitor:\n\
+         processes, resources, file systems.",
+    )));
     text.set_justify(gtk::Justification::Center);
-    let tech = gtk::Label::new(Some(&format!(
-        "GTK {}.{}.{} · Daten aus /proc",
-        gtk::major_version(),
-        gtk::minor_version(),
-        gtk::micro_version()
+    let tech = gtk::Label::new(Some(&gettext_f(
+        "GTK {version} · data from /proc",
+        &[(
+            "version",
+            &format!(
+                "{}.{}.{}",
+                gtk::major_version(),
+                gtk::minor_version(),
+                gtk::micro_version()
+            ),
+        )],
     )));
     tech.add_css_class("dim-label");
-    let license = gtk::Label::new(Some("Lizenz: GNU GPL, Version 3 oder neuer"));
+    let license = gtk::Label::new(Some(&gettext("License: GNU GPL, version 3 or later")));
     license.add_css_class("dim-label");
     body.append(&name);
     body.append(&text);
     body.append(&tech);
     body.append(&license);
-    let close = gtk::Button::with_mnemonic("_Schließen");
+    let close = gtk::Button::with_mnemonic(&gettext("_Close"));
     window.set_child(Some(&inhalt(&body, &knopfzeile(&[&close]))));
     window.set_default_widget(Some(&close));
     escape_schliesst(&window);

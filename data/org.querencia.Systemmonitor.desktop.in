@@ -1,0 +1,19 @@
+[Desktop Entry]
+# Querencia Systemmonitor. Desktop-ID = GApplication-ID org.querencia.Systemmonitor,
+# damit labwc und die Fensterliste Titelleistensymbol und Namen finden.
+# Vorlage: Name, GenericName, Comment und Keywords sind englisch; die
+# Übersetzungen (Name[de]= …) setzt `werkzeug/i18n.py desktop` aus po/*.po
+# ein (entspricht msgfmt --desktop). Erzeugt: org.querencia.Systemmonitor.desktop.
+Type=Application
+Version=1.5
+Name=System Monitor
+GenericName=System Monitor
+Comment=View current processes and monitor system state
+Exec=querencia-systemmonitor
+TryExec=querencia-systemmonitor
+Icon=org.querencia.Systemmonitor
+Terminal=false
+Categories=GTK;System;Monitor;
+Keywords=Monitor;System;Process;CPU;Memory;Network;
+StartupNotify=true
+StartupWMClass=org.querencia.Systemmonitor

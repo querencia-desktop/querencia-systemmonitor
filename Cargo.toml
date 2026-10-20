@@ -1,6 +1,6 @@
 [package]
 name = "querencia-systemmonitor"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 rust-version = "1.92"
 description = "Querencia Systemmonitor: Prozesse, Ressourcen und Dateisysteme für Querencia Desktop"
@@ -12,6 +12,9 @@ publish = false
 gtk = { package = "gtk4", version = "0.11", features = ["v4_12"] }
 # Nur für kill(2), setpriority(2), statvfs(3) und sysconf(3); siehe src/sys.rs.
 libc = "0.2"
+# Übersetzungen über GNU gettext (po/, .mo unter share/locale). Feature
+# gettext-system: das gettext der glibc statt eines mitgebauten libintl.
+gettext-rs = { version = "0.8", features = ["gettext-system"] }
 
 [profile.release]
 lto = true

@@ -3,3 +3,7 @@
 /laufzeit
 /werkzeug/bin/qeingabe
 /werkzeug/bin/qausgabe
+# Vorlage der Integration 0.1.1: Binary und Katalog nicht ins Repo
+/integration/vorschlag-011/querencia-systemmonitor
+/integration/vorschlag-011/share/
+__pycache__/

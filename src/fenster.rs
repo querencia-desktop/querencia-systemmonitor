@@ -11,7 +11,6 @@ use std::time::Duration;
 use gtk::prelude::*;
 use gtk::{gdk, gio, glib};
 
-use crate::FENSTER_TITEL;
 use crate::dateisystemliste::Dateisystemliste;
 use crate::daten::cpu::{self, Stat};
 use crate::daten::einheiten;
@@ -19,6 +18,8 @@ use crate::daten::prozesse;
 use crate::daten::speicher;
 use crate::dialoge;
 use crate::einstellungen::{Einstellungen, SPALTEN};
+use crate::fenster_titel;
+use crate::i18n::{gettext, gettext_f, ngettext_f};
 use crate::prozessliste::{ProzessObjekt, Prozessliste};
 use crate::ressourcen::Ressourcen;
 use crate::sys;
@@ -53,7 +54,7 @@ pub fn kuerzel_installieren(app: &gtk::Application) {
     }
 }
 
-fn section(items: &[(&str, &str)]) -> gio::Menu {
+fn section(items: &[(String, &str)]) -> gio::Menu {
     let m = gio::Menu::new();
     for (label, action) in items {
         m.append(Some(label), Some(action));
@@ -71,66 +72,83 @@ fn submenu(sections: &[gio::Menu]) -> gio::Menu {
 
 /// Einträge für Prozesse (Menü „Bearbeiten“ und Kontextmenü).
 fn prozess_eintraege() -> gio::Menu {
+    // TRANSLATORS: Menü „Edit“ und Kontextmenü der Prozessliste (Wortschatz
+    // gnome-system-monitor 2.x); Zugriffstasten verschieden halten.
     submenu(&[
         section(&[
-            ("Prozess _beenden", "win.beenden"),
-            ("Prozess _abwürgen", "win.abwuergen"),
+            (gettext("_End Process"), "win.beenden"),
+            (gettext("_Kill Process"), "win.abwuergen"),
         ]),
-        section(&[("_Priorität ändern …", "win.prioritaet")]),
-        section(&[("_Eigenschaften", "win.eigenschaften")]),
+        section(&[(gettext("Change P_riority…"), "win.prioritaet")]),
+        section(&[(gettext("_Properties"), "win.eigenschaften")]),
     ])
+}
+
+/// Menüeintrag einer Spalte im Untermenü „Spalten“ (mit Zugriffstaste).
+fn spalte_menue(kennung: &str) -> String {
+    // TRANSLATORS: Untermenü „Columns“; Zugriffstasten verschieden halten.
+    match kennung {
+        "benutzer" => gettext("_User"),
+        "pid" => gettext("_PID"),
+        "cpu" => gettext("% _CPU"),
+        "speicher" => gettext("_Memory"),
+        "nice" => gettext("_Nice"),
+        "zustand" => gettext("_Status"),
+        other => other.to_string(),
+    }
 }
 
 fn menu_model() -> gio::Menu {
     let bar = gio::Menu::new();
     bar.append_submenu(
-        Some("_Überwachung"),
+        // TRANSLATORS: Menüleiste (gnome-system-monitor 2.x): Monitor, Edit,
+        // View, Help; Zugriffstasten je Menü verschieden halten.
+        Some(&gettext("_Monitor")),
         &submenu(&[
-            section(&[("_Aktualisieren", "win.aktualisieren")]),
-            section(&[("_Beenden", "win.quit")]),
+            section(&[(gettext("_Refresh"), "win.aktualisieren")]),
+            section(&[(gettext("_Quit"), "win.quit")]),
         ]),
     );
     let bearbeiten = prozess_eintraege();
-    bearbeiten.append_section(None, &section(&[("Prozess _suchen …", "win.suchen")]));
-    bar.append_submenu(Some("_Bearbeiten"), &bearbeiten);
+    bearbeiten.append_section(
+        None,
+        &section(&[(gettext("_Search for Process…"), "win.suchen")]),
+    );
+    bar.append_submenu(Some(&gettext("_Edit")), &bearbeiten);
 
     let filter = section(&[
-        ("_Alle Prozesse", "win.filter::alle"),
-        ("_Eigene Prozesse", "win.filter::eigene"),
-        ("A_ktive Prozesse", "win.filter::aktive"),
+        (gettext("A_ll Processes"), "win.filter::alle"),
+        (gettext("M_y Processes"), "win.filter::eigene"),
+        (gettext("_Active Processes"), "win.filter::aktive"),
     ]);
     let intervall = gio::Menu::new();
     for s in [1, 2, 3, 5, 10] {
         intervall.append(
-            Some(&format!("{s} Sekunde{}", if s == 1 { "" } else { "n" })),
+            Some(&ngettext_f("{n} second", "{n} seconds", s, &[])),
             Some(&format!("win.intervall::{s}")),
         );
     }
     let spalten = gio::Menu::new();
-    for (kennung, titel) in [
-        ("benutzer", "_Benutzer"),
-        ("pid", "_PID"),
-        ("cpu", "% _CPU"),
-        ("speicher", "_Speicher"),
-        ("nice", "_Nice"),
-        ("zustand", "_Zustand"),
-    ] {
-        spalten.append(Some(titel), Some(&format!("win.spalte-{kennung}")));
+    for kennung in SPALTEN {
+        spalten.append(
+            Some(&spalte_menue(kennung)),
+            Some(&format!("win.spalte-{kennung}")),
+        );
     }
     let ansicht = gio::Menu::new();
     ansicht.append_section(None, &filter);
     let weitere = gio::Menu::new();
-    weitere.append_submenu(Some("Aktualisierungs_intervall"), &intervall);
-    weitere.append_submenu(Some("_Spalten"), &spalten);
+    weitere.append_submenu(Some(&gettext("Update _Interval")), &intervall);
+    weitere.append_submenu(Some(&gettext("_Columns")), &spalten);
     ansicht.append_section(None, &weitere);
     ansicht.append_section(
         None,
-        &section(&[("Alle _Dateisysteme anzeigen", "win.alle-dateisysteme")]),
+        &section(&[(gettext("Show All _File Systems"), "win.alle-dateisysteme")]),
     );
-    bar.append_submenu(Some("_Ansicht"), &ansicht);
+    bar.append_submenu(Some(&gettext("_View")), &ansicht);
     bar.append_submenu(
-        Some("_Hilfe"),
-        &submenu(&[section(&[("_Info", "win.about")])]),
+        Some(&gettext("_Help")),
+        &submenu(&[section(&[(gettext("_About"), "win.about")])]),
     );
     bar
 }
@@ -172,7 +190,7 @@ impl Fenster {
         app.set_menubar(Some(&menu_model()));
         let window = gtk::ApplicationWindow::builder()
             .application(app)
-            .title(FENSTER_TITEL)
+            .title(fenster_titel())
             .default_width(einstellungen.breite)
             .default_height(einstellungen.hoehe)
             .show_menubar(true)
@@ -191,21 +209,25 @@ impl Fenster {
         notebook.set_vexpand(true);
         notebook.append_page(
             &prozesse.widget,
-            Some(&gtk::Label::with_mnemonic("_Prozesse")),
+            // TRANSLATORS: Reiter wie gnome-system-monitor 2.x.
+            Some(&gtk::Label::with_mnemonic(&gettext("_Processes"))),
         );
         notebook.append_page(
             &ressourcen.widget,
-            Some(&gtk::Label::with_mnemonic("_Ressourcen")),
+            Some(&gtk::Label::with_mnemonic(&gettext("_Resources"))),
         );
         notebook.append_page(
             &dateisysteme.widget,
-            Some(&gtk::Label::with_mnemonic("_Dateisysteme")),
+            Some(&gtk::Label::with_mnemonic(&gettext("_File Systems"))),
         );
         notebook.set_current_page(Some(einstellungen.reiter as u32));
 
-        let status_cpu = gtk::Label::new(Some("CPU: –"));
-        let status_speicher = gtk::Label::new(Some("Speicher: –"));
-        let status_prozesse = gtk::Label::new(Some("Prozesse: –"));
+        // TRANSLATORS: Statuszeile; „–“ steht, bis der erste Wert da ist.
+        let status_cpu = gtk::Label::new(Some(&gettext_f("CPU: {value}", &[("value", "–")])));
+        let status_speicher =
+            gtk::Label::new(Some(&gettext_f("Memory: {value}", &[("value", "–")])));
+        let status_prozesse =
+            gtk::Label::new(Some(&gettext_f("Processes: {value}", &[("value", "–")])));
         let statusbar = gtk::Box::new(gtk::Orientation::Horizontal, 18);
         statusbar.add_css_class("qsm-statusbar");
         for l in [&status_cpu, &status_speicher, &status_prozesse] {
@@ -434,16 +456,21 @@ impl Fenster {
             None => "–".to_string(),
         };
         *self.cpu_alt.borrow_mut() = Some(stat);
-        self.status_cpu.set_text(&format!("CPU: {cpu_text}"));
+        self.status_cpu
+            .set_text(&gettext_f("CPU: {value}", &[("value", &cpu_text)]));
         if let Some(s) = speicher::lese_meminfo() {
-            self.status_speicher.set_text(&format!(
-                "Speicher: {} von {}",
-                einheiten::bytes(s.belegt()),
-                einheiten::bytes(s.gesamt)
+            self.status_speicher.set_text(&gettext_f(
+                "Memory: {used} of {total}",
+                &[
+                    ("used", &einheiten::bytes(s.belegt())),
+                    ("total", &einheiten::bytes(s.gesamt)),
+                ],
             ));
         }
-        self.status_prozesse
-            .set_text(&format!("Prozesse: {anzahl}"));
+        self.status_prozesse.set_text(&gettext_f(
+            "Processes: {value}",
+            &[("value", &anzahl.to_string())],
+        ));
         self.dateisysteme.aktualisieren();
         self.aktionen_anpassen();
     }
@@ -473,38 +500,58 @@ impl Fenster {
         if !o.eigen() {
             dialoge::fehler(
                 &self.window,
-                "Fremde Prozesse werden nur angezeigt.",
-                "Nur eigene Prozesse lassen sich beenden, abwürgen oder in der Priorität ändern.",
+                &gettext("Processes of other users are only shown."),
+                &gettext("Only your own processes can be ended, killed or changed in priority."),
             );
             return;
         }
         let p = o.prozess();
         let (primary, secondary, knopf) = match signal {
             sys::Signal::Beenden => (
-                format!("Prozess „{}“ (PID {}) beenden?", p.name, p.pid),
-                "Beim Beenden eines Prozesses können nicht gespeicherte Daten verloren gehen. Der Prozess erhält das Signal SIGTERM und kann noch aufräumen.",
-                "Prozess _beenden",
+                gettext_f(
+                    "End the process “{name}” (PID {pid})?",
+                    &[("name", &p.name), ("pid", &p.pid.to_string())],
+                ),
+                gettext(
+                    "Ending a process may lose unsaved data. The process receives the signal SIGTERM and can still clean up.",
+                ),
+                gettext("_End Process"),
             ),
             sys::Signal::Abwuergen => (
-                format!("Prozess „{}“ (PID {}) abwürgen?", p.name, p.pid),
-                "Beim Abwürgen eines Prozesses gehen nicht gespeicherte Daten verloren. Der Prozess erhält das Signal SIGKILL und wird sofort beendet.",
-                "Prozess _abwürgen",
+                gettext_f(
+                    "Kill the process “{name}” (PID {pid})?",
+                    &[("name", &p.name), ("pid", &p.pid.to_string())],
+                ),
+                gettext(
+                    "Killing a process loses unsaved data. The process receives the signal SIGKILL and stops immediately.",
+                ),
+                gettext("_Kill Process"),
             ),
         };
         let schwach = Rc::downgrade(self);
         let name = p.name.clone();
         let pid = p.pid;
-        dialoge::frage(&self.window, &primary, secondary, knopf, true, move || {
-            let Some(f) = schwach.upgrade() else { return };
-            match sys::signal(pid, signal) {
-                Ok(()) => f.aktualisieren(),
-                Err(text) => dialoge::fehler(
-                    &f.window,
-                    &format!("„{name}“ (PID {pid}) konnte nicht beendet werden."),
-                    &text,
-                ),
-            }
-        });
+        dialoge::frage(
+            &self.window,
+            &primary,
+            &secondary,
+            &knopf,
+            true,
+            move || {
+                let Some(f) = schwach.upgrade() else { return };
+                match sys::signal(pid, signal) {
+                    Ok(()) => f.aktualisieren(),
+                    Err(text) => dialoge::fehler(
+                        &f.window,
+                        &gettext_f(
+                            "“{name}” (PID {pid}) could not be ended.",
+                            &[("name", &name), ("pid", &pid.to_string())],
+                        ),
+                        &text,
+                    ),
+                }
+            },
+        );
     }
 
     fn prioritaet_aendern(self: &Rc<Self>) {
@@ -514,8 +561,8 @@ impl Fenster {
         if !o.eigen() {
             dialoge::fehler(
                 &self.window,
-                "Fremde Prozesse werden nur angezeigt.",
-                "Die Priorität lässt sich nur bei eigenen Prozessen ändern.",
+                &gettext("Processes of other users are only shown."),
+                &gettext("The priority can only be changed for your own processes."),
             );
             return;
         }
@@ -539,11 +586,12 @@ impl Fenster {
         };
         let p = o.prozess();
         let e = prozesse::lese_eigenschaften(p.pid, self.btime.get(), sys::takt());
+        let zustand = prozesse::zustand_text(p.zustand);
         let kopf = dialoge::Kopf {
             name: &p.name,
             pid: p.pid,
             benutzer: &p.benutzer,
-            zustand: prozesse::zustand_text(p.zustand),
+            zustand: &zustand,
             speicher: p.rss,
             nice: p.nice,
         };

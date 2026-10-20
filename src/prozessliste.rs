@@ -16,6 +16,7 @@ use crate::daten::cpu::Stat;
 use crate::daten::einheiten;
 use crate::daten::prozesse::{self, Benutzer, Prozess};
 use crate::einstellungen::{self, Einstellungen, SPALTEN};
+use crate::i18n::{gettext, pgettext};
 use crate::sys;
 
 mod imp {
@@ -97,7 +98,7 @@ impl ProzessObjekt {
             self,
             zustand,
             notify_zustand,
-            prozesse::zustand_text(p.zustand).to_string()
+            prozesse::zustand_text(p.zustand)
         );
         self.imp().cpu.set(cpu);
         self.imp().daten.replace(p.clone());
@@ -182,7 +183,7 @@ fn sortierer(kennung: &'static str) -> gtk::CustomSorter {
             "speicher" => pa.rss.cmp(&pb.rss).then(pa.pid.cmp(&pb.pid)),
             "nice" => pa.nice.cmp(&pb.nice).then(pa.pid.cmp(&pb.pid)),
             "zustand" => prozesse::zustand_text(pa.zustand)
-                .cmp(prozesse::zustand_text(pb.zustand))
+                .cmp(&prozesse::zustand_text(pb.zustand))
                 .then(pa.pid.cmp(&pb.pid)),
             _ => std::cmp::Ordering::Equal,
         };
@@ -249,18 +250,26 @@ impl Prozessliste {
         tabelle.set_model(Some(&auswahl));
 
         let mut spalten = Vec::new();
-        let definitionen: [(&'static str, &str, &'static str, f32, i32, bool); 7] = [
-            ("name", "Prozessname", "name", 0.0, -1, true),
-            ("benutzer", "Benutzer", "benutzer", 0.0, 110, false),
-            ("pid", "PID", "pid-text", 1.0, 70, false),
-            ("cpu", "% CPU", "cpu-text", 1.0, 70, false),
-            ("speicher", "Speicher", "speicher-text", 1.0, 100, false),
-            ("nice", "Nice", "nice-text", 1.0, 56, false),
-            ("zustand", "Zustand", "zustand", 0.0, 120, false),
+        // TRANSLATORS: Spaltenköpfe der Prozessliste (gnome-system-monitor 2.x).
+        let definitionen: [(&'static str, String, &'static str, f32, i32, bool); 7] = [
+            ("name", gettext("Process Name"), "name", 0.0, -1, true),
+            ("benutzer", gettext("User"), "benutzer", 0.0, 110, false),
+            ("pid", gettext("PID"), "pid-text", 1.0, 70, false),
+            ("cpu", gettext("% CPU"), "cpu-text", 1.0, 70, false),
+            (
+                "speicher",
+                gettext("Memory"),
+                "speicher-text",
+                1.0,
+                100,
+                false,
+            ),
+            ("nice", gettext("Nice"), "nice-text", 1.0, 56, false),
+            ("zustand", gettext("Status"), "zustand", 0.0, 120, false),
         ];
         for (kennung, titel, prop, xalign, breite, expand) in definitionen {
             let spalte = gtk::ColumnViewColumn::builder()
-                .title(titel)
+                .title(titel.as_str())
                 .factory(&fabrik(prop, xalign))
                 .sorter(&sortierer(kennung))
                 .resizable(true)
@@ -278,13 +287,13 @@ impl Prozessliste {
         }
 
         let suche = gtk::SearchEntry::new();
-        suche.set_placeholder_text(Some("Prozess suchen (Name, PID, Benutzer)"));
+        suche.set_placeholder_text(Some(&gettext("Search for a process (name, PID, user)")));
         suche.set_hexpand(true);
         let suchzeile = gtk::Box::new(gtk::Orientation::Horizontal, 6);
         suchzeile.set_margin_top(6);
         suchzeile.set_margin_start(6);
         suchzeile.set_margin_end(6);
-        let suchlabel = gtk::Label::with_mnemonic("_Suchen:");
+        let suchlabel = gtk::Label::with_mnemonic(&gettext("_Search:"));
         suchlabel.set_mnemonic_widget(Some(&suche));
         suchzeile.append(&suchlabel);
         suchzeile.append(&suche);
@@ -299,7 +308,8 @@ impl Prozessliste {
         scroll.set_margin_start(6);
         scroll.set_margin_end(6);
 
-        let knopf = gtk::Button::with_mnemonic("_Prozess beenden");
+        // TRANSLATORS: Knopf unter der Prozessliste (im Deutschen „_Prozess beenden“).
+        let knopf = gtk::Button::with_mnemonic(&pgettext("button", "_End Process"));
         knopf.set_action_name(Some("win.beenden"));
         let knopfzeile = gtk::Box::new(gtk::Orientation::Horizontal, 6);
         knopfzeile.set_halign(gtk::Align::End);

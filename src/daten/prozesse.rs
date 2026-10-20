@@ -5,6 +5,8 @@ use std::fs;
 use std::os::unix::fs::MetadataExt;
 use std::path::Path;
 
+use crate::i18n::gettext;
+
 /// Felder aus `/proc/<pid>/stat` (Nummern wie in proc(5)).
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StatZeile {
@@ -46,18 +48,20 @@ pub fn parse_stat_zeile(text: &str) -> Option<StatZeile> {
     })
 }
 
-/// Deutscher Zustandstext zu einem `stat`-Zustandsbuchstaben.
-pub fn zustand_text(zustand: char) -> &'static str {
+/// Zustandstext (übersetzt) zu einem `stat`-Zustandsbuchstaben.
+pub fn zustand_text(zustand: char) -> String {
+    // TRANSLATORS: Prozesszustände (Spalte „Status“), Wortschatz
+    // gnome-system-monitor 2.x.
     match zustand {
-        'R' => "Läuft",
-        'S' => "Schläft",
-        'D' => "Wartet (E/A)",
-        'Z' => "Zombie",
-        'T' => "Angehalten",
-        't' => "Wird verfolgt",
-        'I' => "Leerlauf",
-        'X' | 'x' => "Beendet",
-        _ => "Unbekannt",
+        'R' => gettext("Running"),
+        'S' => gettext("Sleeping"),
+        'D' => gettext("Waiting (I/O)"),
+        'Z' => gettext("Zombie"),
+        'T' => gettext("Stopped"),
+        't' => gettext("Traced"),
+        'I' => gettext("Idle"),
+        'X' | 'x' => gettext("Dead"),
+        _ => gettext("Unknown"),
     }
 }
 
@@ -221,7 +225,7 @@ pub fn lese_eigenschaften(pid: i32, btime: u64, takt: u64) -> Eigenschaften {
                 .collect())
         }
         Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => {
-            Err("Keine Berechtigung (fremder Prozess)".to_string())
+            Err(gettext("No permission (process of another user)"))
         }
         Err(e) => Err(e.to_string()),
     };
@@ -275,9 +279,9 @@ mod tests {
 
     #[test]
     fn zustandstexte() {
-        assert_eq!(zustand_text('R'), "Läuft");
+        assert_eq!(zustand_text('R'), "Running");
         assert_eq!(zustand_text('Z'), "Zombie");
-        assert_eq!(zustand_text('?'), "Unbekannt");
+        assert_eq!(zustand_text('?'), "Unknown");
     }
 
     #[test]

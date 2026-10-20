@@ -3,7 +3,8 @@
 ```bash
 cargo fmt --all --check
 cargo clippy --all-targets --offline -- -D warnings
-cargo test --offline                      # 32 Tests ohne Display: /proc-Parser
+python3 werkzeug/i18n.py pruefen         # Katalog vollständig, .pot aktuell
+cargo test --offline                      # Tests ohne Display: /proc-Parser
                                           # mit Beispieldateien (tests/daten/),
                                           # Einheiten, CPU-Prozent, INI, sys.rs
 ```
@@ -25,4 +26,10 @@ Beendet werden im Szenario nur eigene `sleep`-Testprozesse. Nach einem
 Abbruch: Reste unter `laufzeit/` (FUSE-Portal) löst `gui-pruefung.sh` beim
 nächsten Lauf.
 
-Integrationsskript in Umleitungspfaden: `bash werkzeug/integration-probe.sh`.
+Integrationsskripte (nur Entwicklungs-VM) haben eigene Proben unter
+`integration/werkzeug/`.
+
+Sprache: Die GUI-Prüfung läuft wie die Sitzung mit `LANG=en_US.UTF-8` und
+`LANGUAGE=de` (`QSM_LANGUAGE=en` für Englisch). Ab 0.1.1 braucht die
+geprüfte Binary den Katalog in `<Ordner der Binary>/share/locale`, sonst ist
+sie englisch.

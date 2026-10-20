@@ -6,9 +6,9 @@ libadwaita und ohne eigene Titelleiste – labwc zeichnet den klassischen
 Rahmen. Alle Daten kommen direkt aus `/proc` und `statvfs`; keine
 Zusatz-Crates außer `libc` für vier Systemaufrufe (`src/sys.rs`).
 
-> **Status: isoliert geprüft (G2-S, 0.1.0), nicht installiert.** Live-
-> Integration nur nach Freigabe des Besitzers über
-> `integration/systemmonitor-integrieren.sh`.
+> **Stand 0.1.1:** Oberfläche deutsch und englisch (GNU gettext). Auf der
+> Entwicklungs-VM live über die Skripte unter `integration/`, nur nach
+> Freigabe.
 
 ## Funktionen
 
@@ -20,17 +20,34 @@ Zusatz-Crates außer `libc` für vier Systemaufrufe (`src/sys.rs`).
 | Dateisysteme | Gerät, Einhängepunkt, Typ, Gesamt, Frei, Verfügbar, Belegt mit Balken; tmpfs/overlay/squashfs ausgeblendet, zuschaltbar |
 | Rahmen | Menüs Überwachung · Bearbeiten · Ansicht · Hilfe, Kontextmenü, Statuszeile (CPU, Speicher, Prozesse), Info mit Querencia-Q; `~/.config/querencia/systemmonitor.ini` merkt Fenstergröße, Reiter, Intervall, Filter, Sortierung, Spalten |
 
-App-ID `org.querencia.Systemmonitor`, Desktop-Datei `Name=Systemüberwachung`,
+App-ID `org.querencia.Systemmonitor`, Desktop-Datei `Name=System Monitor`
+(`Name[de]=Systemüberwachung`),
 `Categories=GTK;System;Monitor;`. **Hinweis Panel:** Das Live-Panel zeigt im
 Menü „System“ nur Einträge mit `Settings;`; mit diesen Kategorien erscheint
 der Systemmonitor unter **Anwendungen → Systemwerkzeuge** (siehe Bericht).
 
 ## Bauen, testen
 
-[docs/BUILDING.md](docs/BUILDING.md), [docs/TESTING.md](docs/TESTING.md).
+[docs/building.md](docs/building.md), [docs/testing.md](docs/testing.md).
+
+## Sprachen
+
+Seit 0.1.1 sind die Texte englisch im Code (msgid) und deutsch in
+`po/de.po` (GNU gettext, Muster Querencia Editor 0.2.0); der deutsche
+Wortlaut ist der bisherige, das Englische folgt gnome-system-monitor 2.x.
+Die Sprache folgt `LANGUAGE`/`LANG`; ohne deutschen Katalog erscheint
+Englisch. Zahlen behalten das Dezimalkomma. po-Pflege mit
+`werkzeug/i18n.py` (`pot`, `update`, `desktop`, `mo`, `pruefen`).
 
 ## Lizenz
 
-GPL-3.0-or-later ([LICENSE](LICENSE)). Eigener Code; aus der GNOME-
+GPL-3.0-or-later ([LICENSE](LICENSE)). Copyright 2026 Querencia Desktop
+contributors. Eigener Code; aus der GNOME-
 Systemüberwachung wurde kein Code übernommen. Logo: offizielles Querencia-
 Logo C2 (`data/logo/`, Prüfsummen in `SHA256SUMS.herkunft`).
+
+Eigene Vermerke: `werkzeug/virtual-keyboard-unstable-v1.xml` (gekürzte Kopie
+des Wayland-Protokolls, Copyright Kristian Høgsberg u. a., MIT-artige Lizenz
+im Dateikopf) und die mit `wayland-scanner` erzeugten Dateien unter
+`werkzeug/bin/` (Lizenz der jeweiligen Protokolle); nur für das Prüfwerkzeug.
+

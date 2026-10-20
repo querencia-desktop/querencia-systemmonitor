@@ -1,0 +1,5 @@
+# Ausnahmen für den Doku-Standard-Check (G2-AH, 20.10.2026):
+# nachweis/ enthält Prüfnachweise der Entwicklungs-VM (Bericht G2-S mit
+# Messwerten und Bildern); der Ordner wird im Veröffentlichungsklon
+# herausgefiltert (ENTSCHEIDUNGEN Nr. 9) und ist keine Projektdoku.
+nachweis/
