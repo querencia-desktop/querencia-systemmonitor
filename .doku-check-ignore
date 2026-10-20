@@ -3,3 +3,8 @@
 # Messwerten und Bildern); der Ordner wird im Veröffentlichungsklon
 # herausgefiltert (ENTSCHEIDUNGEN Nr. 9) und ist keine Projektdoku.
 nachweis/
+# Werkstatt-Ordner, Ausnahmen vom Doku-Standard (DOKU-1, Auftrag pottrauschen 2026-10-20):
+# gui-test/ – Wegwerfprofile der isolierten GUI-Läufe (eigenes HOME mit Testdateien); von Git ignoriert.
+gui-test/
+# laufzeit/ – Laufzeitordner (XDG_RUNTIME_DIR) der isolierten Läufe; von Git ignoriert.
+laufzeit/

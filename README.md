@@ -6,9 +6,19 @@ libadwaita und ohne eigene Titelleiste – labwc zeichnet den klassischen
 Rahmen. Alle Daten kommen direkt aus `/proc` und `statvfs`; keine
 Zusatz-Crates außer `libc` für vier Systemaufrufe (`src/sys.rs`).
 
-> **Stand 0.1.1:** Oberfläche deutsch und englisch (GNU gettext). Auf der
-> Entwicklungs-VM live über die Skripte unter `integration/`, nur nach
-> Freigabe.
+> **Alpha.** Fremde Prozesse werden nur angezeigt. Keine Sicherheits- oder
+> Datenverlustgarantie.
+
+## Stand
+
+| | |
+|---|---|
+| Version | 0.1.2 (Tag `systemmonitor/0.1.2`, Vorlage `systemmonitor/0.1.2-1`; ändert gegenüber 0.1.1 nur die Auswahlfarbe der Schrift) |
+| Auf der Entwicklungs-VM | live seit 20.10.2026, nur über die Skripte unter `integration/` nach Freigabe |
+| Letzte Prüfung | 20.10.2026: fmt und Clippy sauber, 36/36 Unit-Tests, Szenario 23/23 (isoliert) |
+| Getestet auf | Ubuntu 26.04, labwc 0.9.8, GTK 4.22 |
+
+Änderungen je Version: [CHANGELOG.md](CHANGELOG.md).
 
 ## Funktionen
 
@@ -26,9 +36,10 @@ App-ID `org.querencia.Systemmonitor`, Desktop-Datei `Name=System Monitor`
 Menü „System“ nur Einträge mit `Settings;`; mit diesen Kategorien erscheint
 der Systemmonitor unter **Anwendungen → Systemwerkzeuge** (siehe Bericht).
 
-## Bauen, testen
+## Bauen und Prüfen
 
-[docs/building.md](docs/building.md), [docs/testing.md](docs/testing.md).
+`cargo build --release --locked`, danach `cargo fmt --all --check`, `cargo clippy --all-targets --locked -- -D warnings`, `cargo test --locked` und `python3 werkzeug/i18n.py pruefen`.
+Voraussetzungen, Katalog, Symbole, Integration und die isolierte GUI-Prüfung: [docs/building.md](docs/building.md), [docs/testing.md](docs/testing.md).
 
 ## Sprachen
 
@@ -41,8 +52,9 @@ Englisch. Zahlen behalten das Dezimalkomma. po-Pflege mit
 
 ## Lizenz
 
-GPL-3.0-or-later ([LICENSE](LICENSE)). Copyright 2026 Querencia Desktop
-contributors. Eigener Code; aus der GNOME-
+GPL-3.0-or-later ([LICENSE](LICENSE), reiner Lizenztext). Copyright 2026
+Querencia Desktop contributors; Urheberhinweis in
+[COPYRIGHT](COPYRIGHT). Eigener Code; aus der GNOME-
 Systemüberwachung wurde kein Code übernommen. Logo: offizielles Querencia-
 Logo C2 (`data/logo/`, Prüfsummen in `SHA256SUMS.herkunft`).
 
