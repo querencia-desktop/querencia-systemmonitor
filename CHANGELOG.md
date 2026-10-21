@@ -1,5 +1,25 @@
 # Änderungen
 
+## 0.1.3 – 2026-10-21
+
+Dunkeltauglich (CSS-Welle dunkel, Vorbereitung Thema 0.2, QD-081):
+
+- Startfehler GTK 4.22: nach dem Start einmal
+  `notify("gtk-interface-color-scheme")`, sonst bliebe ein unter „dunkel“
+  gestartetes Programm hell.
+- `style.css` ohne feste Hellfarben: Menüleiste, Menüeinträge, Reiterkopf,
+  gewählter Reiter, Spaltenköpfe, Statuszeile, Diagrammrahmen und
+  Fortschrittsschrift nutzen `@theme_bg_color`, `@theme_fg_color`,
+  `@theme_base_color` und `@borders`; den Menügrund setzt das Thema. Kein
+  `@media`-Block, deshalb keine Bindung des CssProviders nötig.
+- Diagramme (cairo) lesen Grund und Schrift aus dem Thema. Hell bleiben alle
+  Werte wie 0.1.2 (Grund `#ffffff`, Gitter, Beschriftung, Rahmen, Palette);
+  auf dunklem Grund gelten die Themenschrift, daraus gemischtes Gitter und
+  Rahmen und die hellen Tango-Töne (jede Linie mindestens 3:1 auf `#2b2a27`,
+  Beschriftung 10,4:1). Legendenfelder ebenso, mit Rand in der Schriftfarbe.
+- Unter Thema 0.1 (ohne dunkle Fassung) bleibt alles hell, auch mit
+  „dunkel“ in den Einstellungen. Texte und Katalog unverändert.
+
 ## 0.1.2 – 2026-10-20
 
 Dunkle Auswahlschrift (CSS-Welle, passend zum GTK-Thema Querencia-Klassisch,

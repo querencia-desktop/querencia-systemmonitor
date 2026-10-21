@@ -41,6 +41,13 @@ fn main() -> glib::ExitCode {
         dialoge::fenstersymbol_registrieren();
         fenster::css_laden();
         fenster::kuerzel_installieren(app);
+        // GTK 4.22 lädt beim Start das Thema neu und setzt dabei das
+        // Farbschema zurück: Unter „dunkel“ bliebe ein neu gestartetes
+        // Programm hell, bis zum ersten Wechsel. Die Meldung stößt das
+        // Nachladen einmal an (hell bleibt unverändert; CSS-Welle dunkel).
+        if let Some(s) = gtk::Settings::default() {
+            s.notify("gtk-interface-color-scheme");
+        }
     });
     app.connect_activate(|app| {
         fenster::Fenster::holen(app).zeigen();

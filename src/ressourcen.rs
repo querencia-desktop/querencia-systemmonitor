@@ -9,7 +9,7 @@ use std::rc::Rc;
 use std::time::{Duration, Instant};
 
 use gtk::prelude::*;
-use gtk::{cairo, glib};
+use gtk::{cairo, gdk, glib};
 
 use crate::daten::cpu::{self, Stat};
 use crate::daten::einheiten;
@@ -32,8 +32,114 @@ pub const PALETTE: [(f64, f64, f64); 8] = [
     (0.333, 0.341, 0.325), // #555753 Grau
 ];
 
+/// Palette für dunkle Themen: die hellen Tango-Töne, Orange bleibt. Jede
+/// Linie hat auf dem dunklen Grund #2b2a27 mindestens 3:1 (WCAG 1.4.11,
+/// Rot 3,43:1); geprüft mit `kontrast-systemmonitor.py`.
+pub const PALETTE_DUNKEL: [(f64, f64, f64); 8] = [
+    (0.941, 0.467, 0.275), // #F07746 Orange
+    (0.447, 0.624, 0.812), // #729FCF Blau
+    (0.541, 0.886, 0.204), // #8AE234 Grün
+    (0.678, 0.498, 0.659), // #AD7FA8 Violett
+    (0.914, 0.725, 0.431), // #E9B96E Braun
+    (0.937, 0.161, 0.161), // #EF2929 Rot
+    (0.988, 0.914, 0.310), // #FCE94F Gelb
+    (0.827, 0.843, 0.812), // #D3D7CF Grau
+];
+
 pub fn farbe(index: usize) -> (f64, f64, f64) {
     PALETTE[index % PALETTE.len()]
+}
+
+pub fn farbe_dunkel(index: usize) -> (f64, f64, f64) {
+    PALETTE_DUNKEL[index % PALETTE_DUNKEL.len()]
+}
+
+type Rgb = (f64, f64, f64);
+
+fn rgb(c: gdk::RGBA) -> Rgb {
+    (
+        f64::from(c.red()),
+        f64::from(c.green()),
+        f64::from(c.blue()),
+    )
+}
+
+/// Relative Helligkeit nach WCAG 2.x (sRGB linearisiert).
+pub fn luminanz((r, g, b): Rgb) -> f64 {
+    let lin = |v: f64| {
+        if v <= 0.04045 {
+            v / 12.92
+        } else {
+            ((v + 0.055) / 1.055).powf(2.4)
+        }
+    };
+    0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
+}
+
+/// a·(1 − t) + b·t
+fn mischen(a: Rgb, b: Rgb, t: f64) -> Rgb {
+    (
+        a.0 + (b.0 - a.0) * t,
+        a.1 + (b.1 - a.1) * t,
+        a.2 + (b.2 - a.2) * t,
+    )
+}
+
+/// Farben eines Verlaufsgraphen. cairo kennt keine Themenfarben: Der Grund
+/// kommt als CSS-Farbe der Zeichenfläche (Klasse `qsm-kurve`, `style.css`:
+/// `color: @theme_base_color`), die Schrift als Farbe des Rahmens (erbt
+/// `@theme_fg_color`). Ist der Grund dunkel, gelten die Schrift des Themas,
+/// daraus gemischte Gitter- und Rahmenfarben und [`PALETTE_DUNKEL`]; sonst die
+/// festen Grauwerte und [`PALETTE`] wie bis 0.1.2. Die Wahl folgt damit dem
+/// tatsächlich geladenen Thema, nicht der Einstellung (Thema 0.1 bleibt hell).
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Graphfarben {
+    pub grund: Rgb,
+    pub gitter: Rgb,
+    pub schrift: Rgb,
+    pub rahmen: Rgb,
+    pub dunkel: bool,
+}
+
+impl Graphfarben {
+    pub fn aus(grund: Rgb, schrift: Rgb) -> Self {
+        if luminanz(grund) < 0.5 {
+            Self {
+                grund,
+                gitter: mischen(grund, schrift, 0.15),
+                schrift,
+                rahmen: mischen(grund, schrift, 0.55),
+                dunkel: true,
+            }
+        } else {
+            Self {
+                grund,
+                gitter: (0.85, 0.85, 0.85),
+                schrift: (0.3, 0.3, 0.3),
+                rahmen: (0.6, 0.6, 0.6),
+                dunkel: false,
+            }
+        }
+    }
+
+    fn von(area: &gtk::DrawingArea) -> Self {
+        let schrift = area.parent().map_or((0.3, 0.3, 0.3), |p| rgb(p.color()));
+        let grund = rgb(area.color());
+        // Greift die CSS-Regel nicht, erbt die Fläche nur die Schrift: dann
+        // wie bis 0.1.2 auf weißem Grund statt Schrift auf Schrift.
+        if grund == schrift {
+            return Self::aus((1.0, 1.0, 1.0), schrift);
+        }
+        Self::aus(grund, schrift)
+    }
+
+    pub fn linie(&self, index: usize) -> Rgb {
+        if self.dunkel {
+            farbe_dunkel(index)
+        } else {
+            farbe(index)
+        }
+    }
 }
 
 /// Verlaufsreihe: neuester Wert vorn.
@@ -87,8 +193,10 @@ fn graph_bereich(w: i32, h: i32) -> (f64, f64, f64, f64) {
 }
 
 /// Gitter, Beschriftung, Reihen. `max` ist der Wert am oberen Rand.
+#[allow(clippy::too_many_arguments)]
 fn zeichnen(
     cr: &cairo::Context,
+    f: &Graphfarben,
     w: i32,
     h: i32,
     reihen: &[(usize, &Reihe)],
@@ -97,11 +205,13 @@ fn zeichnen(
     mitte_text: &str,
 ) {
     let (x0, y0, bw, bh) = graph_bereich(w, h);
-    cr.set_source_rgb(1.0, 1.0, 1.0);
+    let (r, g, b) = f.grund;
+    cr.set_source_rgb(r, g, b);
     let _ = cr.paint();
     cr.set_line_width(1.0);
     // Gitter: 4 waagerechte Felder, 6 senkrechte (je 10 s)
-    cr.set_source_rgb(0.85, 0.85, 0.85);
+    let (r, g, b) = f.gitter;
+    cr.set_source_rgb(r, g, b);
     for i in 0..=4 {
         let y = (y0 + bh * f64::from(i) / 4.0).round() + 0.5;
         cr.move_to(x0, y);
@@ -114,7 +224,8 @@ fn zeichnen(
     }
     let _ = cr.stroke();
     // Beschriftung
-    cr.set_source_rgb(0.3, 0.3, 0.3);
+    let (r, g, b) = f.schrift;
+    cr.set_source_rgb(r, g, b);
     cr.select_font_face("Sans", cairo::FontSlant::Normal, cairo::FontWeight::Normal);
     cr.set_font_size(10.0);
     let rechtsbuendig = |cr: &cairo::Context, text: &str, x: f64, y: f64| {
@@ -140,7 +251,7 @@ fn zeichnen(
     let schritt = bw / PUNKTE as f64;
     let max = max.max(f64::EPSILON);
     for (farbindex, reihe) in reihen {
-        let (r, g, b) = farbe(*farbindex);
+        let (r, g, b) = f.linie(*farbindex);
         cr.set_source_rgb(r, g, b);
         let mut erster = true;
         for (i, wert) in reihe.0.iter().enumerate() {
@@ -157,7 +268,8 @@ fn zeichnen(
     }
     // Rahmen
     cr.set_line_width(1.0);
-    cr.set_source_rgb(0.6, 0.6, 0.6);
+    let (r, g, b) = f.rahmen;
+    cr.set_source_rgb(r, g, b);
     cr.rectangle(x0.round() + 0.5, y0.round() + 0.5, bw.round(), bh.round());
     let _ = cr.stroke();
 }
@@ -167,12 +279,21 @@ fn farbfeld(index: usize) -> gtk::DrawingArea {
     a.set_content_width(12);
     a.set_content_height(12);
     a.set_valign(gtk::Align::Center);
-    a.set_draw_func(move |_, cr, w, h| {
-        let (r, g, b) = farbe(index);
+    a.set_draw_func(move |a, cr, w, h| {
+        // Dunkel, wenn die geerbte Schrift (@theme_fg_color) hell ist; dann
+        // die dunkle Palette und ein Rand in der Schriftfarbe.
+        let schrift = rgb(a.color());
+        let dunkel = luminanz(schrift) > 0.5;
+        let (r, g, b) = if dunkel {
+            farbe_dunkel(index)
+        } else {
+            farbe(index)
+        };
         cr.set_source_rgb(r, g, b);
         cr.rectangle(0.0, 0.0, f64::from(w), f64::from(h));
         let _ = cr.fill();
-        cr.set_source_rgb(0.3, 0.3, 0.3);
+        let (r, g, b) = if dunkel { schrift } else { (0.3, 0.3, 0.3) };
+        cr.set_source_rgb(r, g, b);
         cr.set_line_width(1.0);
         cr.rectangle(0.5, 0.5, f64::from(w) - 1.0, f64::from(h) - 1.0);
         let _ = cr.stroke();
@@ -210,6 +331,8 @@ fn abschnitt(titel: &str, area: &gtk::DrawingArea, legenden: &gtk::FlowBox) -> g
     t.set_xalign(0.0);
     let rahmen = gtk::Box::new(gtk::Orientation::Vertical, 0);
     rahmen.add_css_class("qsm-graph");
+    // Trägt den Grund des Graphen als CSS-Farbe (siehe Graphfarben).
+    area.add_css_class("qsm-kurve");
     rahmen.append(area);
     area.set_vexpand(true);
     area.set_hexpand(true);
@@ -249,7 +372,7 @@ impl Ressourcen {
         cpu_area.set_content_height(104);
         {
             let v = verlauf.clone();
-            cpu_area.set_draw_func(move |_, cr, w, h| {
+            cpu_area.set_draw_func(move |a, cr, w, h| {
                 let v = v.borrow();
                 let mut reihen: Vec<(usize, &Reihe)> = v
                     .kerne
@@ -258,7 +381,16 @@ impl Ressourcen {
                     .map(|(i, r)| (i + 1, r))
                     .collect();
                 reihen.push((0, &v.cpu_gesamt));
-                zeichnen(cr, w, h, &reihen, 100.0, "100 %", "50 %");
+                zeichnen(
+                    cr,
+                    &Graphfarben::von(a),
+                    w,
+                    h,
+                    &reihen,
+                    100.0,
+                    "100 %",
+                    "50 %",
+                );
             });
         }
         let cpu_legenden = gtk::FlowBox::new();
@@ -282,10 +414,11 @@ impl Ressourcen {
         speicher_area.set_content_height(84);
         {
             let v = verlauf.clone();
-            speicher_area.set_draw_func(move |_, cr, w, h| {
+            speicher_area.set_draw_func(move |a, cr, w, h| {
                 let v = v.borrow();
                 zeichnen(
                     cr,
+                    &Graphfarben::von(a),
                     w,
                     h,
                     &[(0, &v.speicher), (1, &v.auslagerung)],
@@ -308,13 +441,14 @@ impl Ressourcen {
         netz_area.set_content_height(84);
         {
             let v = verlauf.clone();
-            netz_area.set_draw_func(move |_, cr, w, h| {
+            netz_area.set_draw_func(move |a, cr, w, h| {
                 let v = v.borrow();
                 let max = netz_skala(v.empfangen.max().max(v.gesendet.max()));
                 let oben = einheiten::rate(max);
                 let mitte = einheiten::rate(max / 2.0);
                 zeichnen(
                     cr,
+                    &Graphfarben::von(a),
                     w,
                     h,
                     &[(0, &v.empfangen), (1, &v.gesendet)],
@@ -488,5 +622,50 @@ mod tests {
     fn palette_beginnt_mit_orange() {
         assert_eq!(farbe(0), (0.941, 0.467, 0.275));
         assert_eq!(farbe(8), farbe(0), "zyklisch");
+        assert_eq!(farbe_dunkel(0), farbe(0), "Akzent auch dunkel");
+        assert_eq!(farbe_dunkel(8), farbe_dunkel(0), "zyklisch");
+    }
+
+    fn kontrast(a: Rgb, b: Rgb) -> f64 {
+        let (la, lb) = (luminanz(a), luminanz(b));
+        (la.max(lb) + 0.05) / (la.min(lb) + 0.05)
+    }
+
+    /// Hell (Thema 0.1/0.2 hell, Grund #ffffff): dieselben Werte wie 0.1.2,
+    /// damit die Graphen pixelgleich bleiben.
+    #[test]
+    fn hell_wie_bisher() {
+        let f = Graphfarben::aus((1.0, 1.0, 1.0), (0.235, 0.235, 0.235));
+        assert!(!f.dunkel);
+        assert_eq!(f.grund, (1.0, 1.0, 1.0));
+        assert_eq!(f.gitter, (0.85, 0.85, 0.85));
+        assert_eq!(f.schrift, (0.3, 0.3, 0.3));
+        assert_eq!(f.rahmen, (0.6, 0.6, 0.6));
+        for (i, farbe) in PALETTE.iter().enumerate() {
+            assert_eq!(f.linie(i), *farbe);
+        }
+    }
+
+    /// Dunkel (Thema 0.2: Grund #2b2a27, Schrift #dfdbd2): Linien und Rahmen
+    /// mindestens 3:1, Beschriftung mindestens 4,5:1 (WCAG AA).
+    #[test]
+    fn dunkel_aa() {
+        let hex = |h: u32| {
+            (
+                f64::from((h >> 16) & 0xff) / 255.0,
+                f64::from((h >> 8) & 0xff) / 255.0,
+                f64::from(h & 0xff) / 255.0,
+            )
+        };
+        let f = Graphfarben::aus(hex(0x2b2a27), hex(0xdfdbd2));
+        assert!(f.dunkel);
+        assert_eq!(f.grund, hex(0x2b2a27));
+        for i in 0..8 {
+            let k = kontrast(f.linie(i), f.grund);
+            assert!(k >= 3.0, "Linie {i}: {k:.2}:1");
+        }
+        assert!(kontrast(f.schrift, f.grund) >= 4.5);
+        assert!(kontrast(f.rahmen, f.grund) >= 3.0);
+        assert!(kontrast(f.gitter, f.grund) < kontrast(f.rahmen, f.grund));
     }
 }
