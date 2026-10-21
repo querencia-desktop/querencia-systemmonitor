@@ -59,9 +59,7 @@ Englisch und Deutsch über GNU gettext (G2-AH, Muster Querencia Editor 0.2.0):
 - Datumsformat im Eigenschaften-Dialog je Sprache (de `TT.MM.JJJJ`,
   en `JJJJ-MM-TT`); Zahlen und Dezimalkomma unverändert.
 - Enthält das eigene Programmsymbol (G2-V, unten), live seit 19.10.
-- Doku nach ENTSCHEIDUNGEN Nr. 17 (`docs/building.md`, `docs/testing.md`,
-  Arbeitsregeln), Integrationswerkzeuge nach
-  `integration/werkzeug/`, Lizenzkopf (Nr. 14 Q5).
+- Doku unter `docs/` (`docs/building.md`, `docs/testing.md`), Lizenzkopf.
 
 ## unveröffentlicht – 2026-10-19 (G2-V)
 
