@@ -13,7 +13,7 @@ Zusatz-Crates außer `libc` für vier Systemaufrufe (`src/sys.rs`).
 
 | | |
 |---|---|
-| Version | 0.1.2 (Tag `systemmonitor/0.1.2`, Vorlage `systemmonitor/0.1.2-1`; ändert gegenüber 0.1.1 nur die Auswahlfarbe der Schrift) |
+| Version | 0.1.3 (Zweig `v0.1.3`, Integration `systemmonitor/0.1.3-int`; dunkeltauglich über Themenfarben, hell unverändert; live bis zur Freigabe 0.1.2) |
 | Auf der Entwicklungs-VM | live seit 20.10.2026, nur über die Skripte unter `integration/` nach Freigabe |
 | Letzte Prüfung | 20.10.2026: fmt und Clippy sauber, 36/36 Unit-Tests, Szenario 23/23 (isoliert) |
 | Getestet auf | Ubuntu 26.04, labwc 0.9.8, GTK 4.22 |
