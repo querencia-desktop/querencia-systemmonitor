@@ -86,8 +86,8 @@ fn mischen(a: Rgb, b: Rgb, t: f64) -> Rgb {
 }
 
 /// Farben eines Verlaufsgraphen. cairo kennt keine Themenfarben: Der Grund
-/// kommt als CSS-Farbe der Zeichenfläche (`style.css`: `color:
-/// @theme_base_color`), die Schrift als Farbe des Rahmens (erbt
+/// kommt als CSS-Farbe der Zeichenfläche (Klasse `qsm-kurve`, `style.css`:
+/// `color: @theme_base_color`), die Schrift als Farbe des Rahmens (erbt
 /// `@theme_fg_color`). Ist der Grund dunkel, gelten die Schrift des Themas,
 /// daraus gemischte Gitter- und Rahmenfarben und [`PALETTE_DUNKEL`]; sonst die
 /// festen Grauwerte und [`PALETTE`] wie bis 0.1.2. Die Wahl folgt damit dem
@@ -124,7 +124,13 @@ impl Graphfarben {
 
     fn von(area: &gtk::DrawingArea) -> Self {
         let schrift = area.parent().map_or((0.3, 0.3, 0.3), |p| rgb(p.color()));
-        Self::aus(rgb(area.color()), schrift)
+        let grund = rgb(area.color());
+        // Greift die CSS-Regel nicht, erbt die Fläche nur die Schrift: dann
+        // wie bis 0.1.2 auf weißem Grund statt Schrift auf Schrift.
+        if grund == schrift {
+            return Self::aus((1.0, 1.0, 1.0), schrift);
+        }
+        Self::aus(grund, schrift)
     }
 
     pub fn linie(&self, index: usize) -> Rgb {
@@ -325,6 +331,8 @@ fn abschnitt(titel: &str, area: &gtk::DrawingArea, legenden: &gtk::FlowBox) -> g
     t.set_xalign(0.0);
     let rahmen = gtk::Box::new(gtk::Orientation::Vertical, 0);
     rahmen.add_css_class("qsm-graph");
+    // Trägt den Grund des Graphen als CSS-Farbe (siehe Graphfarben).
+    area.add_css_class("qsm-kurve");
     rahmen.append(area);
     area.set_vexpand(true);
     area.set_hexpand(true);

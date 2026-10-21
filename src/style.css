@@ -93,7 +93,7 @@ box.qsm-graph {
 
 /* cairo kennt keine Themenfarben: Die Zeichenfläche liest ihren Grund aus
    „color“ (src/ressourcen.rs, Graphfarben); die Schrift erbt der Rahmen. */
-box.qsm-graph > drawingarea {
+box.qsm-graph > .qsm-kurve {
   color: @theme_base_color;
 }
 
