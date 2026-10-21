@@ -10,3 +10,6 @@ __pycache__/
 # Vorlage der Integration 0.1.2: Binary und Katalog nicht ins Repo
 /integration/vorschlag-012/querencia-systemmonitor
 /integration/vorschlag-012/share/
+# Vorlage der Integration 0.1.3: Binary und Katalog nicht ins Repo
+/integration/013/vorlage/querencia-systemmonitor
+/integration/013/vorlage/share/
