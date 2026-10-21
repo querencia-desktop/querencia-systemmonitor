@@ -1,7 +1,7 @@
 # Ausnahmen für den Doku-Standard-Check (G2-AH, 20.10.2026):
 # nachweis/ enthält Prüfnachweise der Entwicklungs-VM (Bericht G2-S mit
 # Messwerten und Bildern); der Ordner wird im Veröffentlichungsklon
-# herausgefiltert (ENTSCHEIDUNGEN Nr. 9) und ist keine Projektdoku.
+# herausgefiltert und ist keine Projektdoku.
 nachweis/
 # Werkstatt-Ordner, Ausnahmen vom Doku-Standard (DOKU-1, Auftrag pottrauschen 2026-10-20):
 # gui-test/ – Wegwerfprofile der isolierten GUI-Läufe (eigenes HOME mit Testdateien); von Git ignoriert.

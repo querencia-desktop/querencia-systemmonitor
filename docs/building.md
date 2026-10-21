@@ -36,4 +36,4 @@ eigener SVG-Name aus der eingebetteten Ressource
 Skripte und Vorlagen unter `integration/` (feste Pfade der VM) stellen eine
 Fassung in die Querencia-Sitzung der VM (unveränderliche Ablage
 `~/opt/querencia/systemmonitor/<sha16>/`, Link, Starter). Der Ordner wird vor
-der Veröffentlichung herausgefiltert (ENTSCHEIDUNGEN Nr. 13).
+der Veröffentlichung herausgefiltert.

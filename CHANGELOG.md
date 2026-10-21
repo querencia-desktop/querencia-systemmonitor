@@ -3,7 +3,7 @@
 ## 0.1.4 – 2026-10-21
 
 Diagrammfarben im hellen Schema mindestens 3:1 auf Weiß (Kontrast hell,
-QD-089; WCAG 1.4.11):
+WCAG 1.4.11):
 
 - Palette hell: Orange `#F07746` → `#D25400` (2,83 → 4,19:1), Grün
   `#73D216` → `#1EA230` (1,92 → 3,35:1), Gelb `#EDD400` → `#8A7E00`
@@ -17,7 +17,7 @@ QD-089; WCAG 1.4.11):
 
 ## 0.1.3 – 2026-10-21
 
-Dunkeltauglich (CSS-Welle dunkel, Vorbereitung Thema 0.2, QD-081):
+Dunkeltauglich (CSS-Welle dunkel, Vorbereitung Thema 0.2):
 
 - Startfehler GTK 4.22: nach dem Start einmal
   `notify("gtk-interface-color-scheme")`, sonst bliebe ein unter „dunkel“
@@ -48,7 +48,7 @@ Entscheidung 20.10.):
 
 ## 0.1.1 – 2026-10-20
 
-Englisch und Deutsch über GNU gettext (G2-AH, Muster Querencia Editor 0.2.0):
+Englisch und Deutsch über GNU gettext (Muster Querencia Editor 0.2.0):
 
 - Texte englisch im Code, Deutsch aus `po/de.po` mit dem bisherigen
   Wortlaut: Menüs nach gnome-system-monitor 2.x (`_Monitor`, `_Edit`,
@@ -58,17 +58,17 @@ Englisch und Deutsch über GNU gettext (G2-AH, Muster Querencia Editor 0.2.0):
 - Intervallmenü mit Pluralformen („1 Sekunde“, „2 Sekunden“).
 - Datumsformat im Eigenschaften-Dialog je Sprache (de `TT.MM.JJJJ`,
   en `JJJJ-MM-TT`); Zahlen und Dezimalkomma unverändert.
-- Enthält das eigene Programmsymbol (G2-V, unten), live seit 19.10.
+- Enthält das eigene Programmsymbol (unten), live seit 19.10.
 - Doku unter `docs/` (`docs/building.md`, `docs/testing.md`), Lizenzkopf.
 
-## unveröffentlicht – 2026-10-19 (G2-V)
+## unveröffentlicht – 2026-10-19
 
-Eigenes Programmsymbol statt des mit dem Editor byte-gleichen Logo-Platzhalters
-(QD-034): Bildschirm mit orangefarbener Lastkurve, PNG 16–256 und SVG ohne
+Eigenes Programmsymbol statt des mit dem Editor byte-gleichen Logo-Platzhalters:
+Bildschirm mit orangefarbener Lastkurve, PNG 16–256 und SVG ohne
 48x48; Fenstersymbol `org.querencia.Systemmonitor-fenster` (GResource) ist
 dasselbe SVG.
 
-## 0.1.0 – 2026-10-18 (G2-S)
+## 0.1.0 – 2026-10-18
 
 Erste Fassung: Reiter Prozesse, Ressourcen, Dateisysteme; Beenden/Abwürgen
 mit Rückfrage; Priorität; Eigenschaften; Einstellungen in

@@ -2,8 +2,10 @@
 
 Systemüberwachung für alle, die Querencia Desktop benutzen: Prozesse,
 Ressourcenverlauf und Dateisysteme in einem Fenster. Teil von
-[Querencia Desktop](https://github.com/querencia-desktop/querencia) – einer
+[Querencia Desktop](https://querencialinux.org) – einer
 klassischen Desktopumgebung im GNOME-2-Stil für Wayland (labwc, Rust, GTK 4).
+Installiert wird es zusammen mit Querencia Desktop aus der APT-Quelle;
+Anleitung auf <https://querencialinux.org>.
 
 *English summary:* A system monitor (processes, resources, file systems)
 modelled on the GNOME 2 System Monitor. Part of Querencia Desktop, a classic
