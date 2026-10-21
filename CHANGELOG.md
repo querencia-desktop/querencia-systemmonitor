@@ -1,5 +1,20 @@
 # Änderungen
 
+## 0.1.4 – 2026-10-21
+
+Diagrammfarben im hellen Schema mindestens 3:1 auf Weiß (Kontrast hell,
+QD-089; WCAG 1.4.11):
+
+- Palette hell: Orange `#F07746` → `#D25400` (2,83 → 4,19:1), Grün
+  `#73D216` → `#1EA230` (1,92 → 3,35:1), Gelb `#EDD400` → `#8A7E00`
+  (1,50 → 4,15:1). Blau, Violett, Braun, Rot und Grau waren schon über 3:1
+  und bleiben. Orange ist bewusst heller als die Verweisfarbe `#B33C0B`
+  des Themas: die hat dieselbe Helligkeit wie Rot `#CC0000`, Gesamt-CPU und
+  CPU 5 wären sonst kaum zu trennen.
+- Rahmen des Zeichenbereichs hell `#999999` → `#888888` (2,85 → 3,54:1).
+- Die Legendenfelder folgen der Palette. Gitter, Beschriftung, Linienform,
+  Texte und Katalog bleiben unverändert, ebenso die ganze dunkle Fassung.
+
 ## 0.1.3 – 2026-10-21
 
 Dunkeltauglich (CSS-Welle dunkel, Vorbereitung Thema 0.2, QD-081):

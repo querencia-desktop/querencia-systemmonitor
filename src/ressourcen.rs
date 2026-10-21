@@ -20,19 +20,23 @@ use crate::i18n::{gettext, gettext_f};
 /// Sekunden im Fenster (ein Messpunkt je Sekunde).
 pub const PUNKTE: usize = 60;
 
-/// Feste Farbpalette, Orange (Querencia-Akzent) zuerst.
+/// Feste Farbpalette für helle Themen, Orange (Querencia-Akzent) zuerst.
+/// Jede Linie hat auf Weiß mindestens 3:1 (WCAG 1.4.11, Grün 3,35:1). Seit
+/// 0.1.4 sind Orange, Grün und Gelb dunkler (bis 0.1.3 #F07746 2,83:1,
+/// #73D216 1,92:1, #EDD400 1,50:1); Orange bleibt in der Helligkeit klar
+/// vom Rot getrennt. Geprüft mit `kontrast-systemmonitor.py`.
 pub const PALETTE: [(f64, f64, f64); 8] = [
-    (0.941, 0.467, 0.275), // #F07746 Orange
+    (0.824, 0.329, 0.000), // #D25400 Orange
     (0.204, 0.396, 0.643), // #3465A4 Blau
-    (0.451, 0.824, 0.086), // #73D216 Grün
+    (0.118, 0.635, 0.188), // #1EA230 Grün
     (0.459, 0.314, 0.482), // #75507B Violett
     (0.757, 0.490, 0.067), // #C17D11 Braun
     (0.800, 0.000, 0.000), // #CC0000 Rot
-    (0.929, 0.831, 0.000), // #EDD400 Gelb
+    (0.541, 0.494, 0.000), // #8A7E00 Gelb
     (0.333, 0.341, 0.325), // #555753 Grau
 ];
 
-/// Palette für dunkle Themen: die hellen Tango-Töne, Orange bleibt. Jede
+/// Palette für dunkle Themen: die hellen Tango-Töne, Orange im Akzent. Jede
 /// Linie hat auf dem dunklen Grund #2b2a27 mindestens 3:1 (WCAG 1.4.11,
 /// Rot 3,43:1); geprüft mit `kontrast-systemmonitor.py`.
 pub const PALETTE_DUNKEL: [(f64, f64, f64); 8] = [
@@ -90,8 +94,9 @@ fn mischen(a: Rgb, b: Rgb, t: f64) -> Rgb {
 /// `color: @theme_base_color`), die Schrift als Farbe des Rahmens (erbt
 /// `@theme_fg_color`). Ist der Grund dunkel, gelten die Schrift des Themas,
 /// daraus gemischte Gitter- und Rahmenfarben und [`PALETTE_DUNKEL`]; sonst die
-/// festen Grauwerte und [`PALETTE`] wie bis 0.1.2. Die Wahl folgt damit dem
-/// tatsächlich geladenen Thema, nicht der Einstellung (Thema 0.1 bleibt hell).
+/// festen Grauwerte und [`PALETTE`] (Rahmen seit 0.1.4 dunkler, 3,54:1). Die
+/// Wahl folgt damit dem tatsächlich geladenen Thema, nicht der Einstellung
+/// (Thema 0.1 bleibt hell).
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Graphfarben {
     pub grund: Rgb,
@@ -116,7 +121,7 @@ impl Graphfarben {
                 grund,
                 gitter: (0.85, 0.85, 0.85),
                 schrift: (0.3, 0.3, 0.3),
-                rahmen: (0.6, 0.6, 0.6),
+                rahmen: (0.533, 0.533, 0.533),
                 dunkel: false,
             }
         }
@@ -620,9 +625,9 @@ mod tests {
 
     #[test]
     fn palette_beginnt_mit_orange() {
-        assert_eq!(farbe(0), (0.941, 0.467, 0.275));
+        assert_eq!(farbe(0), (0.824, 0.329, 0.000));
         assert_eq!(farbe(8), farbe(0), "zyklisch");
-        assert_eq!(farbe_dunkel(0), farbe(0), "Akzent auch dunkel");
+        assert_eq!(farbe_dunkel(0), (0.941, 0.467, 0.275), "Akzent dunkel");
         assert_eq!(farbe_dunkel(8), farbe_dunkel(0), "zyklisch");
     }
 
@@ -631,19 +636,40 @@ mod tests {
         (la.max(lb) + 0.05) / (la.min(lb) + 0.05)
     }
 
-    /// Hell (Thema 0.1/0.2 hell, Grund #ffffff): dieselben Werte wie 0.1.2,
-    /// damit die Graphen pixelgleich bleiben.
+    /// Hell (Thema 0.1/0.2 hell, Grund #ffffff): Gitter und Beschriftung wie
+    /// bis 0.1.3; Linien und Rahmen seit 0.1.4 mindestens 3:1.
     #[test]
-    fn hell_wie_bisher() {
+    fn hell_3_zu_1() {
         let f = Graphfarben::aus((1.0, 1.0, 1.0), (0.235, 0.235, 0.235));
         assert!(!f.dunkel);
         assert_eq!(f.grund, (1.0, 1.0, 1.0));
         assert_eq!(f.gitter, (0.85, 0.85, 0.85));
         assert_eq!(f.schrift, (0.3, 0.3, 0.3));
-        assert_eq!(f.rahmen, (0.6, 0.6, 0.6));
         for (i, farbe) in PALETTE.iter().enumerate() {
             assert_eq!(f.linie(i), *farbe);
+            let k = kontrast(f.linie(i), f.grund);
+            assert!(k >= 3.0, "Linie {i}: {k:.2}:1");
         }
+        assert!(kontrast(f.schrift, f.grund) >= 4.5);
+        let k = kontrast(f.rahmen, f.grund);
+        assert!(k >= 3.0, "Rahmen: {k:.2}:1");
+        assert!(kontrast(f.gitter, f.grund) < k);
+    }
+
+    /// Dunkel bleibt wie 0.1.3 (0.1.4 ändert nur die helle Fassung).
+    #[test]
+    fn dunkel_wie_013() {
+        let alt = [
+            (0.941, 0.467, 0.275),
+            (0.447, 0.624, 0.812),
+            (0.541, 0.886, 0.204),
+            (0.678, 0.498, 0.659),
+            (0.914, 0.725, 0.431),
+            (0.937, 0.161, 0.161),
+            (0.988, 0.914, 0.310),
+            (0.827, 0.843, 0.812),
+        ];
+        assert_eq!(PALETTE_DUNKEL, alt);
     }
 
     /// Dunkel (Thema 0.2: Grund #2b2a27, Schrift #dfdbd2): Linien und Rahmen
