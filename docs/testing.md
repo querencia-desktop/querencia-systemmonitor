@@ -26,7 +26,7 @@ Beendet werden im Szenario nur eigene `sleep`-Testprozesse. Nach einem
 Abbruch: Reste unter `laufzeit/` (FUSE-Portal) löst `gui-pruefung.sh` beim
 nächsten Lauf.
 
-Integrationsskripte (nur Entwicklungs-VM) haben eigene Proben unter
+Integrationsskripte (nur Entwicklungsumgebung) haben eigene Proben unter
 `integration/werkzeug/`.
 
 Sprache: Die GUI-Prüfung läuft wie die Sitzung mit `LANG=en_US.UTF-8` und

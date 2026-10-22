@@ -1,10 +1,17 @@
-# Ausnahmen für den Doku-Standard-Check (G2-AH, 20.10.2026):
-# nachweis/ enthält Prüfnachweise der Entwicklungs-VM (Bericht G2-S mit
+# Ausnahmen für den Doku-Standard-Check (20.10.2026):
+# nachweis/ enthält Prüfnachweise der Entwicklungsumgebung (Prüfbericht mit
 # Messwerten und Bildern); der Ordner wird im Veröffentlichungsklon
-# herausgefiltert (ENTSCHEIDUNGEN Nr. 9) und ist keine Projektdoku.
+# herausgefiltert und ist keine Projektdoku.
 nachweis/
-# Werkstatt-Ordner, Ausnahmen vom Doku-Standard (DOKU-1, Auftrag pottrauschen 2026-10-20):
+# Werkstatt-Ordner, Ausnahmen vom Doku-Standard (Auftrag pottrauschen 2026-10-20):
 # gui-test/ – Wegwerfprofile der isolierten GUI-Läufe (eigenes HOME mit Testdateien); von Git ignoriert.
 gui-test/
 # laufzeit/ – Laufzeitordner (XDG_RUNTIME_DIR) der isolierten Läufe; von Git ignoriert.
 laufzeit/
+
+# GitHub-Dateien, begründete Ausnahme vom Doku-Standard: SECURITY.md und die
+# PR-Vorlage unter .github/ stehen dort, wo GitHub sie erwartet; MARKE.md
+# steht wie LICENSE und COPYRIGHT im Root (Vorlage aller Querencia-Repos).
+SECURITY.md
+MARKE.md
+.github/

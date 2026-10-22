@@ -7,7 +7,7 @@ Ubuntu 26.04: `cargo`, `rustc` (≥ 1.92, Ubuntu 1.93.1), `pkgconf`,
 cargo build --release --locked --offline
 ```
 
-Auf der Entwicklungs-VM (viele parallele Sessions): gemeinsamer Build-Lock,
+In der Entwicklungsumgebung (viele parallele Sessions): gemeinsamer Build-Lock,
 `CARGO_BUILD_JOBS` klein halten, unter `nice`, vorher `df -h /`, danach
 `cargo clean`. Für Pakete und Anhänge mit
 `RUSTFLAGS="--remap-path-prefix=$HOME=~"` bauen.
@@ -32,8 +32,8 @@ eigener SVG-Name aus der eingebetteten Ressource
 (`data/resource/systemmonitor.gresource`, neu erzeugen mit
 `werkzeug/ressourcen.sh`).
 
-**Integration (nur auf der Entwicklungs-VM, nicht Teil der Veröffentlichung):**
+**Integration (nur in der Entwicklungsumgebung, nicht Teil der Veröffentlichung):**
 Skripte und Vorlagen unter `integration/` (feste Pfade der VM) stellen eine
 Fassung in die Querencia-Sitzung der VM (unveränderliche Ablage
 `~/opt/querencia/systemmonitor/<sha16>/`, Link, Starter). Der Ordner wird vor
-der Veröffentlichung herausgefiltert (ENTSCHEIDUNGEN Nr. 13).
+der Veröffentlichung herausgefiltert.
