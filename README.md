@@ -15,7 +15,7 @@ Zusatz-Crates außer `libc` für vier Systemaufrufe (`src/sys.rs`).
 |---|---|
 | Version | 0.1.5 (Zweig `systemmonitor-qd120`, Integration `systemmonitor/0.1.5-int`; Info-Dialog mit Alpha-Hinweis, Website, Copyright und Lizenz, Hilfe-Menü mit Online-Hilfe und Fehler melden) |
 | Auf der Entwicklungs-VM | live seit 20.10.2026 (0.1.4 seit 21.10.2026), nur über die Skripte unter `integration/` nach Freigabe; 0.1.5 wartet auf Freigabe |
-| Letzte Prüfung | 21.10.2026 (0.1.4): fmt und Clippy sauber, 39/39 Unit-Tests, Integrationsprobe 128/0, isolierte GUI-Regression gegen 0.1.3 (gekürzte Matrix, 8 Läufe, 96/0; hell nur Farbtausch in den Diagrammen, dunkel pixelgleich), Kontrast `integration/014/nachweis/kontrast.md` (Arbeitsordner `~/projects/querencia-systemmonitor-014/nachweis/`) |
+| Letzte Prüfung | 22.10.2026 (0.1.5): fmt und Clippy sauber, 40/40 Unit-Tests, `i18n.py pruefen` PASS; isoliert de/en 1024×768 mit Browser-Attrappe: Online-Hilfe öffnet /de/docs/ bzw. /en/docs/, Fehler melden die GitHub-Seite (je über die Zugriffstaste), Info-Dialog mit Alpha-Hinweis, Website, Copyright und Lizenz |
 | Getestet auf | Ubuntu 26.04, labwc 0.9.8, GTK 4.22 |
 
 Änderungen je Version: [CHANGELOG.md](CHANGELOG.md).
