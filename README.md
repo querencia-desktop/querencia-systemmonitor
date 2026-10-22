@@ -13,8 +13,8 @@ Zusatz-Crates außer `libc` für vier Systemaufrufe (`src/sys.rs`).
 
 | | |
 |---|---|
-| Version | 0.1.4 (Zweig `v0.1.4`, Integration `systemmonitor/0.1.4-int`; helle Diagrammfarben mindestens 3:1, dunkel unverändert; live bis zur Freigabe 0.1.3) |
-| Auf der Entwicklungs-VM | live seit 20.10.2026, nur über die Skripte unter `integration/` nach Freigabe |
+| Version | 0.1.5 (Zweig `systemmonitor-qd120`, Integration `systemmonitor/0.1.5-int`; Info-Dialog mit Alpha-Hinweis, Website, Copyright und Lizenz, Hilfe-Menü mit Online-Hilfe und Fehler melden) |
+| Auf der Entwicklungs-VM | live seit 20.10.2026 (0.1.4 seit 21.10.2026), nur über die Skripte unter `integration/` nach Freigabe; 0.1.5 wartet auf Freigabe |
 | Letzte Prüfung | 21.10.2026 (0.1.4): fmt und Clippy sauber, 39/39 Unit-Tests, Integrationsprobe 128/0, isolierte GUI-Regression gegen 0.1.3 (gekürzte Matrix, 8 Läufe, 96/0; hell nur Farbtausch in den Diagrammen, dunkel pixelgleich), Kontrast `integration/014/nachweis/kontrast.md` (Arbeitsordner `~/projects/querencia-systemmonitor-014/nachweis/`) |
 | Getestet auf | Ubuntu 26.04, labwc 0.9.8, GTK 4.22 |
 
