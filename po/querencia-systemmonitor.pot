@@ -34,19 +34,19 @@ msgstr ""
 msgid "Monitor;System;Process;CPU;Memory;Network;"
 msgstr ""
 
-#: src/dateisystemliste.rs:213
+#: src/dateisystemliste.rs:206
 msgid "Device"
 msgstr ""
 
-#: src/dateisystemliste.rs:214
+#: src/dateisystemliste.rs:207
 msgid "Directory"
 msgstr ""
 
-#: src/dateisystemliste.rs:215
+#: src/dateisystemliste.rs:208
 msgid "Type"
 msgstr ""
 
-#: src/dateisystemliste.rs:216
+#: src/dateisystemliste.rs:211
 msgid "Total"
 msgstr ""
 
@@ -106,11 +106,11 @@ msgstr ""
 msgid "No permission (process of another user)"
 msgstr ""
 
-#: src/dialoge.rs:158 src/dialoge.rs:239
+#: src/dialoge.rs:158 src/dialoge.rs:243
 msgid "_Cancel"
 msgstr ""
 
-#: src/dialoge.rs:188 src/dialoge.rs:370 src/dialoge.rs:422
+#: src/dialoge.rs:188 src/dialoge.rs:379 src/dialoge.rs:477
 msgid "_Close"
 msgstr ""
 
@@ -123,133 +123,146 @@ msgstr ""
 msgid "Change the priority of process “{name}” (PID {pid})"
 msgstr ""
 
-#. TRANSLATORS: Marken des Reglers im Dialog „Change Priority“.
-#: src/dialoge.rs:227
+#: src/dialoge.rs:230
 msgid "Very High"
 msgstr ""
 
-#: src/dialoge.rs:228
+#: src/dialoge.rs:232
 msgid "Normal"
 msgstr ""
 
-#: src/dialoge.rs:229
+#: src/dialoge.rs:233
 msgid "Very Low"
 msgstr ""
 
-#: src/dialoge.rs:230
+#: src/dialoge.rs:234
 msgid ""
 "Nice value: lower values mean higher priority.\n"
 "Without root privileges the priority can only be lowered."
 msgstr ""
 
 #. TRANSLATORS: Knopf; Zugriffstaste verschieden von „_Cancel“.
-#: src/dialoge.rs:241
+#: src/dialoge.rs:245
 msgid "Change _Priority"
 msgstr ""
 
-#: src/dialoge.rs:253
+#: src/dialoge.rs:257
 msgid "The priority could not be changed."
 msgstr ""
 
-#: src/dialoge.rs:302
+#: src/dialoge.rs:306
 #, no-c-format
 msgid "Properties of “{name}” (PID {pid})"
 msgstr ""
 
 #. TRANSLATORS: Datumsformat für „Started:“ (strftime wie GLib).
-#: src/dialoge.rs:319
+#: src/dialoge.rs:323
 msgid "%Y-%m-%d %H:%M:%S"
 msgstr ""
 
-#: src/dialoge.rs:321
+#: src/dialoge.rs:325
 msgid "unknown"
 msgstr ""
 
-#: src/dialoge.rs:323
+#: src/dialoge.rs:327
 msgid "(kernel thread, no command line)"
 msgstr ""
 
 #. TRANSLATORS: Zeilen im Dialog „Properties“.
-#: src/dialoge.rs:328
+#: src/dialoge.rs:332
 msgid "Process name:"
 msgstr ""
 
-#: src/dialoge.rs:329
+#: src/dialoge.rs:333
 msgid "User:"
 msgstr ""
 
-#: src/dialoge.rs:330
+#: src/dialoge.rs:334
 msgid "PID:"
 msgstr ""
 
-#: src/dialoge.rs:331
+#: src/dialoge.rs:335
 msgid "Status:"
 msgstr ""
 
-#: src/dialoge.rs:332
+#: src/dialoge.rs:339
 msgid "Memory (RSS):"
 msgstr ""
 
-#: src/dialoge.rs:333
+#: src/dialoge.rs:342
 msgid "Priority (Nice):"
 msgstr ""
 
-#: src/dialoge.rs:334
+#: src/dialoge.rs:343
 msgid "Started:"
 msgstr ""
 
-#: src/dialoge.rs:335
+#: src/dialoge.rs:344
 msgid "Command line:"
 msgstr ""
 
-#: src/dialoge.rs:336
+#: src/dialoge.rs:345
 msgid "not readable"
 msgstr ""
 
-#: src/dialoge.rs:340
+#: src/dialoge.rs:349
 msgid "Working directory:"
 msgstr ""
 
-#: src/dialoge.rs:346
+#: src/dialoge.rs:355
 msgid "Open Files"
 msgstr ""
 
-#: src/dialoge.rs:357
+#: src/dialoge.rs:366
 msgid "(none)"
 msgstr ""
 
-#: src/dialoge.rs:359
+#: src/dialoge.rs:368
 #, no-c-format
 msgid "Not readable: {reason}"
 msgstr ""
 
-#. TRANSLATORS: Fenstertitel des Info-Dialogs; {name} ist der Programmname.
-#: src/dialoge.rs:384
-#, no-c-format
-msgid "About {name}"
+#. TRANSLATORS: Adresse der Online-Hilfe; nur das Sprachkürzel anpassen (deutsch …/de/docs/).
+#: src/dialoge.rs:401
+msgid "https://querencialinux.org/en/docs/"
 msgstr ""
 
-#: src/dialoge.rs:397
+#. TRANSLATORS: Fenstertitel des Info-Dialogs; deutsch mit dem Eigennamen „Querencia Systemmonitor“, englisch mit dem Namen aus dem Anwendungsmenü.
+#: src/dialoge.rs:417
+msgid "About System Monitor"
+msgstr ""
+
+#. TRANSLATORS: Programmname und Version im Info-Dialog; deutsch „Querencia Systemmonitor {version}“.
+#: src/dialoge.rs:428
+#, no-c-format
+msgid "System Monitor {version}"
+msgstr ""
+
+#: src/dialoge.rs:436
 msgid ""
 "System monitor for Querencia Desktop\n"
 "modelled on the GNOME 2 System Monitor:\n"
 "processes, resources, file systems."
 msgstr ""
 
-#: src/dialoge.rs:403
+#: src/dialoge.rs:442
 #, no-c-format
 msgid "GTK {version} · data from /proc"
 msgstr ""
 
-#: src/dialoge.rs:416
-msgid "License: GNU GPL, version 3 or later"
+#: src/dialoge.rs:455
+msgid "Alpha – not released for everyday use."
 msgstr ""
 
-#: src/fenster.rs:79 src/fenster.rs:522
+#: src/dialoge.rs:468
+msgid "License: GPL-3.0-or-later"
+msgstr ""
+
+#: src/fenster.rs:79 src/fenster.rs:534
 msgid "_End Process"
 msgstr ""
 
-#: src/fenster.rs:80 src/fenster.rs:532
+#: src/fenster.rs:80 src/fenster.rs:544
 msgid "_Kill Process"
 msgstr ""
 
@@ -345,78 +358,87 @@ msgstr ""
 msgid "_Help"
 msgstr ""
 
-#: src/fenster.rs:151
+#. TRANSLATORS: Hilfe-Menü; Online-Hilfe und Fehlermeldung öffnen den Browser. Zugriffstasten im Menü verschieden halten.
+#: src/fenster.rs:155
+msgid "Online _Help"
+msgstr ""
+
+#: src/fenster.rs:156
+msgid "_Report a Bug"
+msgstr ""
+
+#: src/fenster.rs:158
 msgid "_About"
 msgstr ""
 
 #. TRANSLATORS: Reiter wie gnome-system-monitor 2.x.
-#: src/fenster.rs:213
+#: src/fenster.rs:221
 msgid "_Processes"
 msgstr ""
 
-#: src/fenster.rs:217
+#: src/fenster.rs:225
 msgid "_Resources"
 msgstr ""
 
-#: src/fenster.rs:221
+#: src/fenster.rs:229
 msgid "_File Systems"
 msgstr ""
 
 #. TRANSLATORS: Statuszeile; „–“ steht, bis der erste Wert da ist.
-#: src/fenster.rs:226 src/fenster.rs:464
+#: src/fenster.rs:234 src/fenster.rs:476
 #, no-c-format
 msgid "CPU: {value}"
 msgstr ""
 
-#: src/fenster.rs:227 src/ressourcen.rs:301
+#: src/fenster.rs:236 src/ressourcen.rs:439
 #, no-c-format
 msgid "Memory: {value}"
 msgstr ""
 
-#: src/fenster.rs:231 src/fenster.rs:474
+#: src/fenster.rs:238 src/fenster.rs:486
 #, no-c-format
 msgid "Processes: {value}"
 msgstr ""
 
-#: src/fenster.rs:466
+#: src/fenster.rs:478
 #, no-c-format
 msgid "Memory: {used} of {total}"
 msgstr ""
 
-#: src/fenster.rs:507 src/fenster.rs:561
+#: src/fenster.rs:519 src/fenster.rs:580
 msgid "Processes of other users are only shown."
 msgstr ""
 
-#: src/fenster.rs:508
+#: src/fenster.rs:520
 msgid "Only your own processes can be ended, killed or changed in priority."
 msgstr ""
 
-#: src/fenster.rs:515
+#: src/fenster.rs:527
 #, no-c-format
 msgid "End the process “{name}” (PID {pid})?"
 msgstr ""
 
-#: src/fenster.rs:519
+#: src/fenster.rs:531
 msgid ""
 "Ending a process may lose unsaved data. The process receives the signal SIGTERM and can still clean up."
 msgstr ""
 
-#: src/fenster.rs:525
+#: src/fenster.rs:537
 #, no-c-format
 msgid "Kill the process “{name}” (PID {pid})?"
 msgstr ""
 
-#: src/fenster.rs:529
+#: src/fenster.rs:541
 msgid ""
 "Killing a process loses unsaved data. The process receives the signal SIGKILL and stops immediately."
 msgstr ""
 
-#: src/fenster.rs:544
+#: src/fenster.rs:562
 #, no-c-format
 msgid "“{name}” (PID {pid}) could not be ended."
 msgstr ""
 
-#: src/fenster.rs:562
+#: src/fenster.rs:581
 msgid "The priority can only be changed for your own processes."
 msgstr ""
 
@@ -436,86 +458,85 @@ msgstr ""
 msgid "% CPU"
 msgstr ""
 
-#: src/prozessliste.rs:259
+#: src/prozessliste.rs:261
 msgid "Memory"
 msgstr ""
 
-#: src/prozessliste.rs:260
+#: src/prozessliste.rs:267
 msgid "Nice"
 msgstr ""
 
-#: src/prozessliste.rs:261
+#: src/prozessliste.rs:268
 msgid "Status"
 msgstr ""
 
-#: src/prozessliste.rs:283
+#: src/prozessliste.rs:290
 msgid "Search for a process (name, PID, user)"
 msgstr ""
 
-#: src/prozessliste.rs:289
+#: src/prozessliste.rs:296
 msgid "_Search:"
 msgstr ""
 
 #. TRANSLATORS: Knopf unter der Prozessliste (im Deutschen „_Prozess beenden“).
-#: src/prozessliste.rs:305
+#: src/prozessliste.rs:312
 msgctxt "button"
 msgid "_End Process"
 msgstr ""
 
-#: src/ressourcen.rs:185
+#: src/ressourcen.rs:311
 #, no-c-format
 msgid "CPU total: {value}"
 msgstr ""
 
-#: src/ressourcen.rs:190
+#: src/ressourcen.rs:316
 #, no-c-format
 msgid "CPU{number}: {value}"
 msgstr ""
 
-#: src/ressourcen.rs:303
+#: src/ressourcen.rs:441
 #, no-c-format
 msgid "Swap: {value}"
 msgstr ""
 
-#: src/ressourcen.rs:330
+#: src/ressourcen.rs:469
 #, no-c-format
 msgid "Received: {value}"
 msgstr ""
 
-#: src/ressourcen.rs:332
+#: src/ressourcen.rs:471
 #, no-c-format
 msgid "Sent: {value}"
 msgstr ""
 
-#. TRANSLATORS: Abschnitte im Reiter „Resources“ (gnome-system-monitor 2.x).
-#: src/ressourcen.rs:341
+#: src/ressourcen.rs:481
 msgid "CPU History"
 msgstr ""
 
-#: src/ressourcen.rs:343
+#: src/ressourcen.rs:486
 msgid "Memory and Swap History"
 msgstr ""
 
-#: src/ressourcen.rs:348
+#: src/ressourcen.rs:491
 msgid "Network History"
 msgstr ""
 
-#: src/ressourcen.rs:408
+#: src/ressourcen.rs:551
 #, no-c-format
 msgid "Memory: {used} ({percent}) of {total}"
 msgstr ""
 
-#: src/ressourcen.rs:416
+#: src/ressourcen.rs:559
 #, no-c-format
 msgid "Swap: {used} ({percent}) of {total}"
 msgstr ""
 
-#: src/ressourcen.rs:435
+#: src/ressourcen.rs:578
 #, no-c-format
 msgid "Received: {rate} (total {sum})"
 msgstr ""
 
-#: src/ressourcen.rs:442
+#: src/ressourcen.rs:585
 #, no-c-format
 msgid "Sent: {rate} (total {sum})"
 msgstr ""
@@ -540,7 +561,7 @@ msgstr ""
 msgid "Invalid process ID."
 msgstr ""
 
-#: src/sys.rs:101
+#: src/sys.rs:102
 msgid ""
 "Without root privileges the priority can only be lowered (higher nice value)."
 msgstr ""

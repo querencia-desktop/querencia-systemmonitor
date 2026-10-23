@@ -44,8 +44,8 @@ Anwendungskennung (App-ID): `org.querencia.Systemmonitor` · Binary:
 
 | | |
 |---|---|
-| Version | 0.1.4 (Tag `systemmonitor/0.1.4`; dunkle Darstellung seit 0.1.3, Diagrammfarben hell mit mindestens 3:1) |
-| Letzte Prüfung | 21.10.2026: fmt und Clippy sauber, 39 Unit-Tests; isolierte GUI-Regression gegen 0.1.3 hell und dunkel (8 Läufe, 96 Prüfpunkte), Kontrastmessung der Diagrammfarben |
+| Version | 0.1.5 (Tag `systemmonitor/0.1.5`; Info-Dialog mit Alpha-Hinweis, Website, Copyright und Lizenz, Hilfe-Menü mit Online-Hilfe und „Fehler melden“); dunkle Darstellung seit 0.1.3, Diagrammfarben hell mit mindestens 3:1 seit 0.1.4 |
+| Letzte Prüfung | 22.10.2026 (0.1.5): fmt und Clippy sauber, 40 Unit-Tests, `i18n.py pruefen`; isoliert de/en 1024×768: Online-Hilfe, „Fehler melden“ (je über die Zugriffstaste) und Info-Dialog. 21.10.2026 (0.1.4): isolierte GUI-Regression gegen 0.1.3 hell und dunkel (8 Läufe, 96 Prüfpunkte), Kontrastmessung der Diagrammfarben |
 | Bekannte Lücken | siehe „Zweck“ und „Alpha“ |
 | Getestet auf | Ubuntu 26.04, labwc 0.9.8, GTK 4.22, Rust 1.93 |
 | Nicht getestet | andere Distributionen, HiDPI, Mehrmonitor |

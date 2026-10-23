@@ -13,5 +13,6 @@ __pycache__/
 # Vorlage der Integration 0.1.3: Binary und Katalog nicht ins Repo
 /integration/013/vorlage/querencia-systemmonitor
 /integration/013/vorlage/share/
-# Ausgaben der isolierten GUI-Prüfung
-/nachweis/
+# Vorlage der Integration 0.1.4: Binary und Katalog nicht ins Repo
+/integration/014/vorlage/querencia-systemmonitor
+/integration/014/vorlage/share/

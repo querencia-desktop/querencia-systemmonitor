@@ -148,7 +148,15 @@ fn menu_model() -> gio::Menu {
     bar.append_submenu(Some(&gettext("_View")), &ansicht);
     bar.append_submenu(
         Some(&gettext("_Help")),
-        &submenu(&[section(&[(gettext("_About"), "win.about")])]),
+        &submenu(&[
+            section(&[
+                // TRANSLATORS: Hilfe-Menü; Online-Hilfe und Fehlermeldung öffnen
+                // den Browser. Zugriffstasten im Menü verschieden halten.
+                (gettext("Online _Help"), "win.online-hilfe"),
+                (gettext("_Report a Bug"), "win.fehler-melden"),
+            ]),
+            section(&[(gettext("_About"), "win.about")]),
+        ]),
     );
     bar
 }
@@ -329,6 +337,14 @@ impl Fenster {
         );
         aktion("prioritaet", Box::new(|f| f.prioritaet_aendern()));
         aktion("eigenschaften", Box::new(|f| f.eigenschaften_zeigen()));
+        aktion(
+            "online-hilfe",
+            Box::new(|f| dialoge::uri_oeffnen(&f.window, &dialoge::online_hilfe())),
+        );
+        aktion(
+            "fehler-melden",
+            Box::new(|f| dialoge::uri_oeffnen(&f.window, dialoge::FEHLER_MELDEN)),
+        );
         aktion("about", Box::new(|f| dialoge::info(&f.window)));
 
         // Filter: Zustandsaktion mit Zeichenkette (Radio-Einträge im Menü).
