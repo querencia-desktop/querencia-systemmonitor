@@ -204,9 +204,12 @@ mod tests {
         assert_eq!(belegt_anteil(5, 0), 1.0);
     }
 
+    /// Mit `alle`: Im Container (CI) ist die Wurzel ein overlay und ohne
+    /// „Alle Dateisysteme anzeigen“ ausgeblendet; die Auswahl selbst prüft
+    /// `mounts_beispiel`.
     #[test]
     fn wurzel_lesbar() {
-        let liste = lese_dateisysteme(false);
+        let liste = lese_dateisysteme(true);
         let wurzel = liste
             .iter()
             .find(|d| d.pfad == "/")
