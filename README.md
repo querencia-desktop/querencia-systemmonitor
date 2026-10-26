@@ -44,8 +44,8 @@ Anwendungskennung (App-ID): `org.querencia.Systemmonitor` · Binary:
 
 | | |
 |---|---|
-| Version | 0.1.5 (Tag `systemmonitor/0.1.5`; Info-Dialog mit Alpha-Hinweis, Website, Copyright und Lizenz, Hilfe-Menü mit Online-Hilfe und „Fehler melden“); dunkle Darstellung seit 0.1.3, Diagrammfarben hell mit mindestens 3:1 seit 0.1.4 |
-| Letzte Prüfung | 22.10.2026 (0.1.5): fmt und Clippy sauber, 40 Unit-Tests, `i18n.py pruefen`; isoliert de/en 1024×768: Online-Hilfe, „Fehler melden“ (je über die Zugriffstaste) und Info-Dialog. 21.10.2026 (0.1.4): isolierte GUI-Regression gegen 0.1.3 hell und dunkel (8 Läufe, 96 Prüfpunkte), Kontrastmessung der Diagrammfarben |
+| Version | 0.1.6 (Tag `systemmonitor/0.1.6`; Italienisch, Spanisch, Französisch); seit 0.1.5 Info-Dialog mit Alpha-Hinweis, Website, Copyright und Lizenz, Hilfe-Menü mit Online-Hilfe und „Fehler melden“); dunkle Darstellung seit 0.1.3, Diagrammfarben hell mit mindestens 3:1 seit 0.1.4 |
+| Letzte Prüfung | 26.10.2026 (0.1.6): fmt und Clippy sauber, 40 Unit-Tests, `i18n.py pruefen` und `msgfmt --check` für de/es/fr/it; isoliert 1024×768: `szenario-sprache.sh` de/en/it/es/fr je 6 PASS (Menüs, Eigenschaften, Priorität, Beenden-Rückfrage, Reiter), alle Menüs, Online-Hilfe, „Fehler melden“, Info je 11 PASS; Regression `szenario.sh` de 21/23 wie die Live-Binary 0.1.5 (Strg+Q/INI im Prüfprofil). 22.10.2026 (0.1.5): fmt und Clippy sauber, 40 Unit-Tests, `i18n.py pruefen`; isoliert de/en 1024×768: Online-Hilfe, „Fehler melden“ (je über die Zugriffstaste) und Info-Dialog. 21.10.2026 (0.1.4): isolierte GUI-Regression gegen 0.1.3 hell und dunkel (8 Läufe, 96 Prüfpunkte), Kontrastmessung der Diagrammfarben |
 | Bekannte Lücken | siehe „Zweck“ und „Alpha“ |
 | Getestet auf | Ubuntu 26.04, labwc 0.9.8, GTK 4.22, Rust 1.93 |
 | Nicht getestet | andere Distributionen, HiDPI, Mehrmonitor |
@@ -93,9 +93,10 @@ Fälle, Ablauf und Belege: [docs/testing.md](docs/testing.md). Arbeitsweise insg
 
 ## Sprachen
 
-Die Texte sind englisch im Code (msgid) und deutsch in `po/de.po` (GNU
-gettext); das Englische folgt gnome-system-monitor 2.x. Die Sprache folgt
-`LANGUAGE`/`LANG`; ohne deutschen Katalog erscheint Englisch. Zahlen behalten
+Die Texte sind englisch im Code (msgid) und deutsch, italienisch, spanisch
+und französisch in `po/de.po`, `po/it.po`, `po/es.po`, `po/fr.po` (GNU
+gettext; it/es/fr seit 0.1.6); das Englische folgt gnome-system-monitor 2.x.
+Die Sprache folgt `LANGUAGE`/`LANG`; ohne passenden Katalog erscheint Englisch. Zahlen behalten
 das Dezimalkomma. po-Pflege mit `werkzeug/i18n.py` (`pot`, `update`,
 `desktop`, `mo`, `pruefen`).
 
