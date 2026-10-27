@@ -1,0 +1,576 @@
+# Querencia Systemmonitor: spanische Übersetzung.
+# Copyright (C) 2026 Querencia Desktop contributors
+# Diese Datei steht unter derselben Lizenz wie Querencia Systemmonitor (GPL-3.0-or-later).
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: querencia-systemmonitor\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-10-26 23:16+0100\n"
+"Last-Translator: Querencia Desktop contributors\n"
+"Language-Team: Español (Querencia)\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. TRANSLATORS: Desktop-Datei, Schlüssel Name
+#. TRANSLATORS: Desktop-Datei, Schlüssel GenericName
+#. TRANSLATORS: Fenstertitel und Titel der Rückfragen.
+#: data/org.querencia.Systemmonitor.desktop.in:9 data/org.querencia.Systemmonitor.desktop.in:10 src/main.rs:31
+msgid "System Monitor"
+msgstr "Monitor del sistema"
+
+#. TRANSLATORS: Desktop-Datei, Schlüssel Comment
+#: data/org.querencia.Systemmonitor.desktop.in:11
+msgid "View current processes and monitor system state"
+msgstr "Ver los procesos actuales y monitorizar el estado del sistema"
+
+#. TRANSLATORS: Desktop-Datei, Schlüssel Keywords (Liste, Einträge mit ; trennen und abschließen)
+#: data/org.querencia.Systemmonitor.desktop.in:17
+msgid "Monitor;System;Process;CPU;Memory;Network;"
+msgstr "Monitor;Sistema;Proceso;CPU;Memoria;Red;Administrador de tareas;"
+
+#: src/dateisystemliste.rs:206
+msgid "Device"
+msgstr "Dispositivo"
+
+#: src/dateisystemliste.rs:207
+msgid "Directory"
+msgstr "Punto de montaje"
+
+#: src/dateisystemliste.rs:208
+msgid "Type"
+msgstr "Tipo"
+
+#: src/dateisystemliste.rs:211
+msgid "Total"
+msgstr "Total"
+
+#: src/dateisystemliste.rs:217
+msgid "Free"
+msgstr "Libre"
+
+#: src/dateisystemliste.rs:220
+msgid "Available"
+msgstr "Disponible"
+
+#: src/dateisystemliste.rs:226
+msgid "Used"
+msgstr "Usado"
+
+#: src/dateisystemliste.rs:259
+msgid "Show _all file systems (also tmpfs, overlay, squashfs)"
+msgstr ""
+"Mostrar _todos los sistemas de archivos (también tmpfs, overlay, squashfs)"
+
+#: src/daten/prozesse.rs:56
+msgid "Running"
+msgstr "En ejecución"
+
+#: src/daten/prozesse.rs:57
+msgid "Sleeping"
+msgstr "Durmiendo"
+
+#: src/daten/prozesse.rs:58
+msgid "Waiting (I/O)"
+msgstr "En espera (E/S)"
+
+#: src/daten/prozesse.rs:59
+msgid "Zombie"
+msgstr "Zombi"
+
+#: src/daten/prozesse.rs:60
+msgid "Stopped"
+msgstr "Detenido"
+
+#: src/daten/prozesse.rs:61
+msgid "Traced"
+msgstr "Rastreado"
+
+#: src/daten/prozesse.rs:62
+msgid "Idle"
+msgstr "Inactivo"
+
+#: src/daten/prozesse.rs:63
+msgid "Dead"
+msgstr "Muerto"
+
+#: src/daten/prozesse.rs:64
+msgid "Unknown"
+msgstr "Desconocido"
+
+#: src/daten/prozesse.rs:228
+msgid "No permission (process of another user)"
+msgstr "Sin permiso (proceso de otro usuario)"
+
+#: src/dialoge.rs:158 src/dialoge.rs:243
+msgid "_Cancel"
+msgstr "_Cancelar"
+
+#: src/dialoge.rs:188 src/dialoge.rs:379 src/dialoge.rs:477
+msgid "_Close"
+msgstr "_Cerrar"
+
+#: src/dialoge.rs:207
+msgid "Change Priority"
+msgstr "Cambiar la prioridad"
+
+#: src/dialoge.rs:212
+#, no-c-format
+msgid "Change the priority of process “{name}” (PID {pid})"
+msgstr "Cambiar la prioridad del proceso «{name}» (PID {pid})"
+
+#: src/dialoge.rs:230
+msgid "Very High"
+msgstr "Muy alta"
+
+#: src/dialoge.rs:232
+msgid "Normal"
+msgstr "Normal"
+
+#: src/dialoge.rs:233
+msgid "Very Low"
+msgstr "Muy baja"
+
+#: src/dialoge.rs:234
+msgid ""
+"Nice value: lower values mean higher priority.\n"
+"Without root privileges the priority can only be lowered."
+msgstr ""
+"Valor nice: los valores más bajos significan más prioridad.\n"
+"Sin privilegios de root la prioridad solo se puede bajar."
+
+#. TRANSLATORS: Knopf; Zugriffstaste verschieden von „_Cancel“.
+#: src/dialoge.rs:245
+msgid "Change _Priority"
+msgstr "Cambiar la _prioridad"
+
+#: src/dialoge.rs:257
+msgid "The priority could not be changed."
+msgstr "No se pudo cambiar la prioridad."
+
+#: src/dialoge.rs:306
+#, no-c-format
+msgid "Properties of “{name}” (PID {pid})"
+msgstr "Propiedades de «{name}» (PID {pid})"
+
+#. TRANSLATORS: Datumsformat für „Started:“ (strftime wie GLib).
+#: src/dialoge.rs:323
+msgid "%Y-%m-%d %H:%M:%S"
+msgstr "%d/%m/%Y %H:%M:%S"
+
+#: src/dialoge.rs:325
+msgid "unknown"
+msgstr "desconocido"
+
+#: src/dialoge.rs:327
+msgid "(kernel thread, no command line)"
+msgstr "(hilo del núcleo, sin línea de órdenes)"
+
+#. TRANSLATORS: Zeilen im Dialog „Properties“.
+#: src/dialoge.rs:332
+msgid "Process name:"
+msgstr "Nombre del proceso:"
+
+#: src/dialoge.rs:333
+msgid "User:"
+msgstr "Usuario:"
+
+#: src/dialoge.rs:334
+msgid "PID:"
+msgstr "PID:"
+
+#: src/dialoge.rs:335
+msgid "Status:"
+msgstr "Estado:"
+
+#: src/dialoge.rs:339
+msgid "Memory (RSS):"
+msgstr "Memoria (RSS):"
+
+#: src/dialoge.rs:342
+msgid "Priority (Nice):"
+msgstr "Prioridad (nice):"
+
+#: src/dialoge.rs:343
+msgid "Started:"
+msgstr "Iniciado:"
+
+#: src/dialoge.rs:344
+msgid "Command line:"
+msgstr "Línea de órdenes:"
+
+#: src/dialoge.rs:345
+msgid "not readable"
+msgstr "no legible"
+
+#: src/dialoge.rs:349
+msgid "Working directory:"
+msgstr "Carpeta de trabajo:"
+
+#: src/dialoge.rs:355
+msgid "Open Files"
+msgstr "Archivos abiertos"
+
+#: src/dialoge.rs:366
+msgid "(none)"
+msgstr "(ninguno)"
+
+#: src/dialoge.rs:368
+#, no-c-format
+msgid "Not readable: {reason}"
+msgstr "No legible: {reason}"
+
+#. TRANSLATORS: Adresse der Online-Hilfe; nur das Sprachkürzel anpassen (deutsch …/de/docs/).
+#: src/dialoge.rs:401
+msgid "https://querencialinux.org/en/docs/"
+msgstr "https://querencialinux.org/es/docs/"
+
+#. TRANSLATORS: Fenstertitel des Info-Dialogs; deutsch mit dem Eigennamen „Querencia Systemmonitor“, englisch mit dem Namen aus dem Anwendungsmenü.
+#: src/dialoge.rs:417
+msgid "About System Monitor"
+msgstr "Acerca de Monitor del sistema"
+
+#. TRANSLATORS: Programmname und Version im Info-Dialog; deutsch „Querencia Systemmonitor {version}“.
+#: src/dialoge.rs:428
+#, no-c-format
+msgid "System Monitor {version}"
+msgstr "Monitor del sistema {version}"
+
+#: src/dialoge.rs:436
+msgid ""
+"System monitor for Querencia Desktop\n"
+"modelled on the GNOME 2 System Monitor:\n"
+"processes, resources, file systems."
+msgstr ""
+"Monitor del sistema para Querencia Desktop\n"
+"inspirado en el Monitor del sistema de GNOME 2:\n"
+"procesos, recursos, sistemas de archivos."
+
+#: src/dialoge.rs:442
+#, no-c-format
+msgid "GTK {version} · data from /proc"
+msgstr "GTK {version} · datos de /proc"
+
+#: src/dialoge.rs:455
+msgid "Alpha – not released for everyday use."
+msgstr "Alfa – aún no apta para el uso diario."
+
+#: src/dialoge.rs:468
+msgid "License: GPL-3.0-or-later"
+msgstr "Licencia: GPL-3.0-or-later"
+
+#: src/fenster.rs:79 src/fenster.rs:534
+msgid "_End Process"
+msgstr "_Finalizar proceso"
+
+#: src/fenster.rs:80 src/fenster.rs:544
+msgid "_Kill Process"
+msgstr "_Matar proceso"
+
+#: src/fenster.rs:82
+msgid "Change P_riority…"
+msgstr "Cambiar _prioridad…"
+
+#: src/fenster.rs:83
+msgid "_Properties"
+msgstr "Pr_opiedades"
+
+#: src/fenster.rs:91
+msgid "_User"
+msgstr "_Usuario"
+
+#: src/fenster.rs:92
+msgid "_PID"
+msgstr "_PID"
+
+#: src/fenster.rs:93
+msgid "% _CPU"
+msgstr "% _CPU"
+
+#: src/fenster.rs:94
+msgid "_Memory"
+msgstr "_Memoria"
+
+#: src/fenster.rs:95
+msgid "_Nice"
+msgstr "_Nice"
+
+#: src/fenster.rs:96
+msgid "_Status"
+msgstr "_Estado"
+
+#. TRANSLATORS: Menüleiste (gnome-system-monitor 2.x): Monitor, Edit, View, Help; Zugriffstasten je Menü verschieden halten.
+#: src/fenster.rs:106
+msgid "_Monitor"
+msgstr "_Monitor"
+
+#: src/fenster.rs:108
+msgid "_Refresh"
+msgstr "_Actualizar"
+
+#: src/fenster.rs:109
+msgid "_Quit"
+msgstr "_Salir"
+
+#: src/fenster.rs:115
+msgid "_Search for Process…"
+msgstr "_Buscar proceso…"
+
+#: src/fenster.rs:117
+msgid "_Edit"
+msgstr "_Editar"
+
+#: src/fenster.rs:120
+msgid "A_ll Processes"
+msgstr "_Todos los procesos"
+
+#: src/fenster.rs:121
+msgid "M_y Processes"
+msgstr "_Mis procesos"
+
+#: src/fenster.rs:122
+msgid "_Active Processes"
+msgstr "Procesos _activos"
+
+#: src/fenster.rs:127
+#, no-c-format
+msgid "{n} second"
+msgid_plural "{n} seconds"
+msgstr[0] "{n} segundo"
+msgstr[1] "{n} segundos"
+
+#: src/fenster.rs:141
+msgid "Update _Interval"
+msgstr "_Intervalo de actualización"
+
+#: src/fenster.rs:142
+msgid "_Columns"
+msgstr "_Columnas"
+
+#: src/fenster.rs:146
+msgid "Show All _File Systems"
+msgstr "Mostrar todos los _sistemas de archivos"
+
+#: src/fenster.rs:148
+msgid "_View"
+msgstr "_Ver"
+
+#: src/fenster.rs:150
+msgid "_Help"
+msgstr "Ay_uda"
+
+#. TRANSLATORS: Hilfe-Menü; Online-Hilfe und Fehlermeldung öffnen den Browser. Zugriffstasten im Menü verschieden halten.
+#: src/fenster.rs:155
+msgid "Online _Help"
+msgstr "Ayuda en _línea"
+
+#: src/fenster.rs:156
+msgid "_Report a Bug"
+msgstr "_Informar de un error"
+
+#: src/fenster.rs:158
+msgid "_About"
+msgstr "_Acerca de"
+
+#. TRANSLATORS: Reiter wie gnome-system-monitor 2.x.
+#: src/fenster.rs:221
+msgid "_Processes"
+msgstr "_Procesos"
+
+#: src/fenster.rs:225
+msgid "_Resources"
+msgstr "_Recursos"
+
+#: src/fenster.rs:229
+msgid "_File Systems"
+msgstr "Sistemas de _archivos"
+
+#. TRANSLATORS: Statuszeile; „–“ steht, bis der erste Wert da ist.
+#: src/fenster.rs:234 src/fenster.rs:476
+#, no-c-format
+msgid "CPU: {value}"
+msgstr "CPU: {value}"
+
+#: src/fenster.rs:236 src/ressourcen.rs:439
+#, no-c-format
+msgid "Memory: {value}"
+msgstr "Memoria: {value}"
+
+#: src/fenster.rs:238 src/fenster.rs:486
+#, no-c-format
+msgid "Processes: {value}"
+msgstr "Procesos: {value}"
+
+#: src/fenster.rs:478
+#, no-c-format
+msgid "Memory: {used} of {total}"
+msgstr "Memoria: {used} de {total}"
+
+#: src/fenster.rs:519 src/fenster.rs:580
+msgid "Processes of other users are only shown."
+msgstr "Los procesos de otros usuarios solo se muestran."
+
+#: src/fenster.rs:520
+msgid "Only your own processes can be ended, killed or changed in priority."
+msgstr ""
+"Solo se pueden finalizar, matar o cambiar de prioridad sus propios procesos."
+
+#: src/fenster.rs:527
+#, no-c-format
+msgid "End the process “{name}” (PID {pid})?"
+msgstr "¿Finalizar el proceso «{name}» (PID {pid})?"
+
+#: src/fenster.rs:531
+msgid ""
+"Ending a process may lose unsaved data. The process receives the signal SIGTERM and can still clean up."
+msgstr ""
+"Al finalizar un proceso pueden perderse datos no guardados. El proceso recibe la señal SIGTERM y todavía puede hacer limpieza."
+
+#: src/fenster.rs:537
+#, no-c-format
+msgid "Kill the process “{name}” (PID {pid})?"
+msgstr "¿Matar el proceso «{name}» (PID {pid})?"
+
+#: src/fenster.rs:541
+msgid ""
+"Killing a process loses unsaved data. The process receives the signal SIGKILL and stops immediately."
+msgstr ""
+"Al matar un proceso se pierden los datos no guardados. El proceso recibe la señal SIGKILL y se detiene inmediatamente."
+
+#: src/fenster.rs:562
+#, no-c-format
+msgid "“{name}” (PID {pid}) could not be ended."
+msgstr "No se pudo finalizar «{name}» (PID {pid})."
+
+#: src/fenster.rs:581
+msgid "The priority can only be changed for your own processes."
+msgstr "La prioridad solo se puede cambiar en sus propios procesos."
+
+#: src/prozessliste.rs:255
+msgid "Process Name"
+msgstr "Nombre del proceso"
+
+#: src/prozessliste.rs:256
+msgid "User"
+msgstr "Usuario"
+
+#: src/prozessliste.rs:257
+msgid "PID"
+msgstr "PID"
+
+#: src/prozessliste.rs:258
+msgid "% CPU"
+msgstr "% CPU"
+
+#: src/prozessliste.rs:261
+msgid "Memory"
+msgstr "Memoria"
+
+#: src/prozessliste.rs:267
+msgid "Nice"
+msgstr "Nice"
+
+#: src/prozessliste.rs:268
+msgid "Status"
+msgstr "Estado"
+
+#: src/prozessliste.rs:290
+msgid "Search for a process (name, PID, user)"
+msgstr "Buscar un proceso (nombre, PID, usuario)"
+
+#: src/prozessliste.rs:296
+msgid "_Search:"
+msgstr "_Buscar:"
+
+#. TRANSLATORS: Knopf unter der Prozessliste (im Deutschen „_Prozess beenden“).
+#: src/prozessliste.rs:312
+msgctxt "button"
+msgid "_End Process"
+msgstr "_Finalizar proceso"
+
+#: src/ressourcen.rs:311
+#, no-c-format
+msgid "CPU total: {value}"
+msgstr "CPU total: {value}"
+
+#: src/ressourcen.rs:316
+#, no-c-format
+msgid "CPU{number}: {value}"
+msgstr "CPU{number}: {value}"
+
+#: src/ressourcen.rs:441
+#, no-c-format
+msgid "Swap: {value}"
+msgstr "Intercambio: {value}"
+
+#: src/ressourcen.rs:469
+#, no-c-format
+msgid "Received: {value}"
+msgstr "Recibido: {value}"
+
+#: src/ressourcen.rs:471
+#, no-c-format
+msgid "Sent: {value}"
+msgstr "Enviado: {value}"
+
+#: src/ressourcen.rs:481
+msgid "CPU History"
+msgstr "Historial de la CPU"
+
+#: src/ressourcen.rs:486
+msgid "Memory and Swap History"
+msgstr "Historial de memoria e intercambio"
+
+#: src/ressourcen.rs:491
+msgid "Network History"
+msgstr "Historial de la red"
+
+#: src/ressourcen.rs:551
+#, no-c-format
+msgid "Memory: {used} ({percent}) of {total}"
+msgstr "Memoria: {used} ({percent}) de {total}"
+
+#: src/ressourcen.rs:559
+#, no-c-format
+msgid "Swap: {used} ({percent}) of {total}"
+msgstr "Intercambio: {used} ({percent}) de {total}"
+
+#: src/ressourcen.rs:578
+#, no-c-format
+msgid "Received: {rate} (total {sum})"
+msgstr "Recibido: {rate} (total {sum})"
+
+#: src/ressourcen.rs:585
+#, no-c-format
+msgid "Sent: {rate} (total {sum})"
+msgstr "Enviado: {rate} (total {sum})"
+
+#: src/sys.rs:47
+msgid "No permission for this process."
+msgstr "Sin permiso para este proceso."
+
+#: src/sys.rs:48
+msgid "Access denied."
+msgstr "Acceso denegado."
+
+#: src/sys.rs:49
+msgid "The process no longer exists."
+msgstr "El proceso ya no existe."
+
+#: src/sys.rs:58
+msgid "This process must not be ended."
+msgstr "Este proceso no debe finalizarse."
+
+#: src/sys.rs:91
+msgid "Invalid process ID."
+msgstr "ID de proceso no válido."
+
+#: src/sys.rs:102
+msgid ""
+"Without root privileges the priority can only be lowered (higher nice value)."
+msgstr ""
+"Sin privilegios de root la prioridad solo se puede bajar (valor nice más alto)."

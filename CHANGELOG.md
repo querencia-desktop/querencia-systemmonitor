@@ -1,5 +1,21 @@
 # Änderungen
 
+## 0.1.6 – 2026-10-26
+
+Italienisch, Spanisch, Französisch:
+
+- Neue Kataloge `po/it.po`, `po/es.po`, `po/fr.po` (je 125 Texte,
+  vollständig): Menüs, Reiter, Spalten, Statuszeile, Ressourcen, Dateisysteme,
+  Dialoge (Eigenschaften, Priorität, Beenden/Abwürgen), Meldungen, Info-Dialog
+  und Desktop-Datei (`Name[it]=Monitor di sistema`, `Name[es]=Monitor del
+  sistema`, `Name[fr]=Moniteur système`). Wortschatz gnome-system-monitor je
+  Sprache und die gemeinsame Querencia-Begriffstabelle; Zugriffstasten im
+  ganzen Fenster eindeutig (Menüleiste, Reiter, Suchfeld, Knopf).
+- „Online-Hilfe“ öffnet querencialinux.org/it|es|fr/docs/; Datum
+  landesüblich.
+- Prüfwerkzeug: `szenario-sprache.sh` kennt it/es/fr (Katalog, Reitertasten).
+- Sonst keine Änderung: Deutsch, Englisch, Daten, Farben und Symbol wie 0.1.5.
+
 ## 0.1.5 – 2026-10-22
 
 Info-Dialog und Hilfe-Menü wie in den übrigen Querencia-Programmen:

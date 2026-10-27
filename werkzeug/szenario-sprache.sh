@@ -14,6 +14,7 @@ ok() { echo "PASS $*" | tee -a "$R"; }
 nok() { echo "FAIL $*" | tee -a "$R"; }
 . "$(dirname "$0")/eingabe.sh"
 SPRACHE=${LANGUAGE%%:*}
+SPRACHE=${SPRACHE%%_*}
 shot() { grim "$OUT/$1-$SPRACHE.png"; }
 running() { pgrep -f "^$SM_BIN" >/dev/null; }
 LOG=$OUT/systemmonitor.log
@@ -35,7 +36,7 @@ PID=$(pgrep -f "^$SM_BIN" | head -1)
 KAT=$(grep -o '[^ ]*querencia-systemmonitor.mo' "/proc/$PID/maps" | head -1)
 echo "INFO Katalog: ${KAT:-keiner}" >>"$R"
 case $SPRACHE in
-de) [ -n "$KAT" ] && ok "de: Katalog eingeblendet" || nok "de: kein Katalog eingeblendet" ;;
+de | it | es | fr) [ -n "$KAT" ] && ok "$SPRACHE: Katalog eingeblendet" || nok "$SPRACHE: kein Katalog eingeblendet" ;;
 *) [ -z "$KAT" ] && ok "$SPRACHE: kein Katalog eingeblendet" || nok "$SPRACHE: Katalog eingeblendet" ;;
 esac
 q "move 1270 710" "wait 400"; shot s1-start
@@ -69,7 +70,7 @@ if kill -0 "$TEST" 2>/dev/null; then nok "Beenden über die Rückfrage ($SPRACHE
 wait "$TEST" 2>/dev/null
 
 # Reiter Ressourcen und Dateisysteme über die Zugriffstasten der Sprache
-case $SPRACHE in de) T_RES=r; T_DAT=d ;; *) T_RES=r; T_DAT=f ;; esac
+case $SPRACHE in de) T_RES=r; T_DAT=d ;; es) T_RES=r; T_DAT=a ;; *) T_RES=r; T_DAT=f ;; esac
 q "chord alt $T_RES" "wait 2500"; shot s9-ressourcen
 q "chord alt $T_DAT" "wait 1500"; shot s10-dateisysteme
 running && ok "Reiter Ressourcen und Dateisysteme (Bilder s9, s10)" || nok "Absturz bei den Reitern"
