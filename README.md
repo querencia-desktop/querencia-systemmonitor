@@ -9,7 +9,8 @@ Anleitung auf <https://querencialinux.org>.
 
 *English summary:* A system monitor (processes, resources, file systems)
 modelled on the GNOME 2 System Monitor. Part of Querencia Desktop, a classic
-GNOME-2-style desktop for Wayland. Alpha software; documentation is in German.
+GNOME-2-style desktop for Wayland. Alpha software; user interface in German,
+English, Italian, Spanish and French; documentation is in German.
 
 > **Alpha.** Fremde Prozesse werden nur angezeigt, eine Priorität lässt sich
 > ohne Root nur senken. Keine Sicherheits- oder Datenverlustgarantie.
